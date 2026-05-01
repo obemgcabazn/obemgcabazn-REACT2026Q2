@@ -1,10 +1,43 @@
-function App() {
+import { Component } from "react";
+import StorageHelper from "./controller/StorageHelper.ts";
+import SearchForm from "./components/SearchForm.tsx";
+import type { Pokemon } from "pokeapi-typescript";
 
-  return (
-    <>
-
-    </>
-  )
+interface AppState {
+    currentSearchQuery: string;
+    loading: boolean;
+    error: Error | null;
+    result: PokemonInList[] | Pokemon | null;
 }
 
-export default App
+interface PokemonInList {
+    name: string;
+    url: string;
+}
+
+export default class App extends Component<Record<string, never>, AppState> {
+    state: AppState = {
+        currentSearchQuery: StorageHelper.get('searchQuery') ?? '',
+        loading: false,
+        error: null,
+        result: null,
+    };
+
+    setSearchQuery = (searchQuery: string) => {
+        this.setState({ currentSearchQuery: searchQuery });
+    };
+
+    render() {
+        return (
+            <div className="container">
+                <h1>Pokemon Searching App</h1>
+                <SearchForm
+                    searchQuery={this.state.currentSearchQuery}
+                    onSearch={this.setSearchQuery}
+                />
+
+            </div>
+        );
+    }
+
+}
