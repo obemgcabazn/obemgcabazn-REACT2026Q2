@@ -1,0 +1,154 @@
+$type-colors: (
+  "normal":   #bcbcac,
+  "fire":     #f08030,
+  "water":    #6890f0,
+  "electric": #f8d030,
+  "grass":    #78c850,
+  "ice":      #98d8d8,
+  "fighting": #c03028,
+  "poison":   #a040a0,
+  "ground":   #e0c068,
+  "flying":   #a890f0,
+  "psychic":  #f85888,
+  "bug":      #a8b820,
+  "rock":     #b8a038,
+  "ghost":    #705898,
+  "dragon":   #7038f8,
+  "dark":     #705848,
+  "steel":    #b8b8d0,
+  "fairy":    #f0b6bc,
+);
+
+.pokemon-card {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+  padding: 32px;
+  background: var(--white);
+  border: 2px solid var(--black);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  max-width: 640px;
+
+  &__image-container {
+    flex-shrink: 0;
+    width: 220px;
+    height: 220px;
+    background: var(--bg-base);
+    border: 2px solid var(--black);
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  &__image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    image-rendering: pixelated;
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: scale(1.08);
+    }
+  }
+
+  &__no-image {
+    color: var(--black);
+    opacity: 0.4;
+    font-size: 14px;
+  }
+
+  &__info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__header {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  &__id {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--black);
+    opacity: 0.45;
+    letter-spacing: 0.05em;
+  }
+
+  &__name {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    text-transform: capitalize;
+    color: var(--black);
+    line-height: 1;
+  }
+
+  &__types {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  &__details {
+    display: flex;
+    gap: 12px;
+  }
+
+  &__detail {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 16px;
+    background: var(--bg-base);
+    border: 2px solid var(--black);
+    border-radius: 10px;
+    min-width: 72px;
+  }
+
+  &__experience {
+    font-size: 14px;
+    color: var(--black);
+    opacity: 0.7;
+  }
+}
+
+.detail-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--black);
+  opacity: 0.5;
+}
+
+.detail-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--black);
+}
+
+.pokemon-type {
+  display: inline-block;
+  padding: 4px 14px;
+  border: 2px solid var(--black);
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: capitalize;
+  letter-spacing: 0.04em;
+  color: var(--black);
+
+  @each $type, $color in $type-colors {
+    &--#{$type} {
+      background: $color;
+    }
+  }
+}
