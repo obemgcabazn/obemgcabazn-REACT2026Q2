@@ -1,3 +1,4 @@
+import './search-form.scss';
 import React, { Component } from 'react';
 import StorageHelper from '../controller/StorageHelper.ts';
 

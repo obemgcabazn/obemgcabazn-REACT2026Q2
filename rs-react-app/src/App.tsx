@@ -1,6 +1,7 @@
 import { Component } from "react";
 import StorageHelper from "./controller/StorageHelper.ts";
 import SearchForm from "./components/SearchForm.tsx";
+import Spinner from "./components/Spinner.tsx";
 import type { Pokemon } from "pokeapi-typescript";
 
 interface AppState {
@@ -27,6 +28,12 @@ export default class App extends Component<Record<string, never>, AppState> {
         this.setState({ currentSearchQuery: searchQuery });
     };
 
+    bottomSection = () => {
+        const { loading } = this.state;
+
+        if (loading) return <Spinner />;
+    };
+
     render() {
         return (
             <div className="container">
@@ -35,7 +42,7 @@ export default class App extends Component<Record<string, never>, AppState> {
                     searchQuery={this.state.currentSearchQuery}
                     onSearch={this.setSearchQuery}
                 />
-
+                {this.bottomSection()}
             </div>
         );
     }
