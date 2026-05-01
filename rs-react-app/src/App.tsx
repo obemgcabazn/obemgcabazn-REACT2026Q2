@@ -4,6 +4,7 @@ import SearchForm from "./components/SearchForm.tsx";
 import PokemonsList from "./components/PokemonsList.tsx";
 import OnePokemon from "./components/OnePokemon.tsx";
 import Spinner from "./components/Spinner.tsx";
+import ErrorHandler from "./components/ErrorHandler.tsx";
 import type { Pokemon } from "pokeapi-typescript";
 
 interface AppState {
@@ -94,9 +95,10 @@ export default class App extends Component<Record<string, never>, AppState> {
     };
 
     bottomSection = () => {
-        const { loading, result, currentSearchQuery } = this.state;
+        const { loading, error, result, currentSearchQuery } = this.state;
 
         if (loading) return <Spinner />;
+        if (error) return <ErrorHandler errorData={error} />;
 
         if (currentSearchQuery && result && !Array.isArray(result)) {
             return <OnePokemon pokemon={result} />;
