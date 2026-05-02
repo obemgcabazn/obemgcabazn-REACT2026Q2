@@ -1,8 +1,8 @@
 import './Spinner.scss';
-import { Component } from 'react';
+import { PureComponent } from 'react';
 import Pokebal from '../assets/pokeball.svg';
 
-export default class Spinner extends Component {
+export default class Spinner extends PureComponent {
   render() {
     return (
       <div className="container">

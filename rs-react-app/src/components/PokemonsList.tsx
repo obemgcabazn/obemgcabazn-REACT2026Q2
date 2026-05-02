@@ -11,6 +11,18 @@ interface PokemonsListProps {
 }
 
 export default class PokemonsList extends Component<PokemonsListProps> {
+  shouldComponentUpdate(nextProps: Readonly<PokemonsListProps>): boolean {
+    const prev = this.props.pokemonsList;
+    const next = nextProps.pokemonsList;
+    if (prev === next) return false;
+    if (prev.length !== next.length) return true;
+    for (let i = 0; i < next.length; i++) {
+      if (next[i].name !== prev[i].name || next[i].url !== prev[i].url)
+        return true;
+    }
+    return false;
+  }
+
   render() {
     return (
       <div className="pokemon-list">

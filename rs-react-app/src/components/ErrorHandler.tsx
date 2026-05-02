@@ -1,11 +1,11 @@
 import './error-handler.scss';
-import { Component } from 'react';
+import { PureComponent } from 'react';
 
 interface ErrorProps {
   errorData: Error;
 }
 
-export default class ErrorHandler extends Component<ErrorProps> {
+export default class ErrorHandler extends PureComponent<ErrorProps> {
   getMessage() {
     switch (this.props.errorData.message) {
       case '404':

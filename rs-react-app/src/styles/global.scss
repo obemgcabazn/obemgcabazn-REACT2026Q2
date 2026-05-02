@@ -5,15 +5,16 @@
   --accent-hover: #fbbf0e;
   --bg-base: #f3e8ff;
   --table-border: #bfb9c6;
-  --effect-input-focus: inset 3px 3px 0 0 rgba(0,0,0,0.25),-2px -2px 0 0 rgba(230,235,245,1);
+  --effect-input-focus:
+    inset 3px 3px 0 0 rgba(0, 0, 0, 0.25), -2px -2px 0 0 rgba(230, 235, 245, 1);
   --shadow: -2px 2px 0 0 rgba(21, 21, 21, 1);
   --border-radius: 16px;
 }
 
 html {
-    font-family: "Faculty Glyphic", sans-serif;
-    font-weight: 400;
-    font-style: normal;
+  font-family: 'Faculty Glyphic', sans-serif;
+  font-weight: 400;
+  font-style: normal;
 }
 
 body {
@@ -25,8 +26,9 @@ body {
   margin: 0 auto;
 }
 
-input, button {
-  font-family: "Lexend", sans-serif;
+input,
+button {
+  font-family: 'Lexend', sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;

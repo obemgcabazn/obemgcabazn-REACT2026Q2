@@ -7,6 +7,10 @@ interface OnePokemonProps {
 }
 
 export default class OnePokemon extends Component<OnePokemonProps> {
+  shouldComponentUpdate(nextProps: OnePokemonProps): boolean {
+    return nextProps.pokemon.id !== this.props.pokemon.id;
+  }
+
   private getImageUrl = (): string => {
     const { pokemon } = this.props;
 

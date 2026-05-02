@@ -20,6 +20,17 @@ export default class SearchForm extends Component<SearchProps, SearchState> {
     };
   }
 
+  shouldComponentUpdate(
+    nextProps: Readonly<SearchProps>,
+    nextState: Readonly<SearchState>
+  ): boolean {
+    return (
+      nextProps.searchQuery !== this.props.searchQuery ||
+      nextProps.onSearch !== this.props.onSearch ||
+      nextState.searchQuery !== this.state.searchQuery
+    );
+  }
+
   handleInputChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const newSearchQuery = event.target.value.trim();
     if (newSearchQuery !== this.state.searchQuery) {
