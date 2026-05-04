@@ -46,21 +46,19 @@ export default class SearchForm extends Component<SearchProps, SearchState> {
 
   render() {
     return (
-      <div>
-        <form className="search__form" onSubmit={this.searchStart}>
-          <input
-            type="text"
-            name="search-input"
-            placeholder="Search request"
-            value={this.state.searchQuery}
-            onChange={this.handleInputChange}
-            className="search__input"
-          />
-          <button className="search__button" type="submit">
-            Search
-          </button>
-        </form>
-      </div>
+      <form className="search__form" onSubmit={this.searchStart}>
+        <input
+          type="text"
+          name="search-input"
+          placeholder="Search request"
+          value={this.state.searchQuery}
+          onChange={this.handleInputChange}
+          className="search__input"
+        />
+        <button className="search__button" type="submit">
+          Search
+        </button>
+      </form>
     );
   }
 }
