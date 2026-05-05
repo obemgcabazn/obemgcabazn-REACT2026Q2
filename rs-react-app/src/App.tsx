@@ -5,6 +5,7 @@ import PokemonsList from './components/PokemonsList.tsx';
 import OnePokemon from './components/OnePokemon.tsx';
 import Spinner from './components/Spinner.tsx';
 import ErrorHandler from './components/ErrorHandler.tsx';
+import TestError from './components/TestError.tsx';
 import type { Pokemon } from 'pokeapi-typescript';
 
 interface AppState {
@@ -111,7 +112,10 @@ export default class App extends Component<Record<string, never>, AppState> {
   render() {
     return (
       <div className="container">
-        <h1>Pokemon Searching App</h1>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <h1>Pokemon Searching App</h1>
+          <TestError />
+        </div>
         <SearchForm
           searchQuery={this.state.currentSearchQuery}
           onSearch={this.setSearchQuery}

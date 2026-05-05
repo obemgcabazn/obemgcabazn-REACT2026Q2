@@ -21,8 +21,9 @@ export default class ErrorHandler extends PureComponent<ErrorProps> {
 
   render() {
     return (
-      <div>
+      <div className="text-center">
         <p className="error-message">{this.getMessage()}</p>
+        <button onClick={() => window.location.reload()}>Reload Page</button>
       </div>
     );
   }
