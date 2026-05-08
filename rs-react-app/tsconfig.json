@@ -1,7 +1,13 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ]
+    "files": [],
+    "references": [
+        { "path": "./tsconfig.app.json" },
+        { "path": "./tsconfig.node.json" }
+    ],
+    "compilerOptions": {
+        "jsx": "react-jsx",
+        "typeRoots": ["./node_modules/@types", "./declarations"],
+        "include": ["src", "declarations.d.ts"],
+        "types": ["@testing-library/jest-dom"]
+    }
 }
