@@ -3,6 +3,7 @@ import { Component } from 'react';
 class Thrower extends Component {
   render(): never | undefined {
     throw new Error('Test Error');
+    // istanbul ignore next
     return;
   }
 }
