@@ -1,4 +1,4 @@
-import { describe, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import PokemonsList from '../components/PokemonsList.tsx';
 
@@ -53,71 +53,56 @@ describe('DOM tests PokemonList', () => {
     ).toBeInTheDocument();
   });
 
-  it('Single Pokemon', () => {
+  it('Multiple Pokemons', () => {
     render(<PokemonsList pokemonsList={multiplePokemon} />);
     expect(screen.getByText('Pokemons count: 3')).toBeInTheDocument();
   });
 });
 
-function renderWithRef(pokemonsList: { name: string; url: string }[]) {
-  let instance: PokemonsList | null = null;
-
-  const { rerender } = render(
-    <PokemonsList
-      ref={(el) => {
-        instance = el;
-      }}
-      pokemonsList={pokemonsList}
-    />
-  );
-
-  return { rerender, getInstance: () => instance };
-}
-
 describe('Render PokemonList', () => {
   it('Prevent to call render', () => {
-    const { rerender, getInstance } = renderWithRef(multiplePokemon);
+    const { rerender } = render(
+      <PokemonsList pokemonsList={multiplePokemon} />
+    );
 
-    const instance = getInstance();
-    if (!instance) throw new Error('instance is null');
-    const renderSpy = vi.spyOn(instance, 'render');
+    rerender(<PokemonsList pokemonsList={multiplePokemon} />);
 
-    rerender(<PokemonsList ref={() => {}} pokemonsList={multiplePokemon} />);
-
-    expect(renderSpy).not.toHaveBeenCalled();
+    expect(screen.getByText('Pokemons count: 3')).toBeInTheDocument();
+    expect(screen.getAllByRole('row')).toHaveLength(4);
   });
 
   it('Length change', () => {
-    const { rerender, getInstance } = renderWithRef(multiplePokemon);
-
-    const instance = getInstance();
-    if (!instance) throw new Error('instance is null');
-    const renderSpy = vi.spyOn(instance, 'render');
+    const { rerender } = render(
+      <PokemonsList pokemonsList={multiplePokemon} />
+    );
 
     const longerList = [
       ...multiplePokemon,
-      { name: 'venusaur', url: 'https://pokeapi.co/api/v2/pokemon/3/' },
+      { name: 'charmander', url: 'https://pokeapi.co/api/v2/pokemon/4/' },
     ];
 
-    rerender(<PokemonsList ref={() => {}} pokemonsList={longerList} />);
-    expect(renderSpy).toHaveBeenCalledOnce();
+    rerender(<PokemonsList pokemonsList={longerList} />);
+    expect(screen.getByText('Pokemons count: 4')).toBeInTheDocument();
   });
 
   it('Name of item in object change for same length', () => {
-    const { rerender, getInstance } = renderWithRef(multiplePokemon);
-
-    const instance = getInstance();
-    if (!instance) throw new Error('instance is null');
-    const renderSpy = vi.spyOn(instance, 'render');
+    const { rerender } = render(
+      <PokemonsList pokemonsList={multiplePokemon} />
+    );
 
     const changedNameList = [
       { name: 'charmander', url: multiplePokemon[0].url },
       multiplePokemon[1],
     ];
 
-    rerender(<PokemonsList ref={() => {}} pokemonsList={changedNameList} />);
+    rerender(<PokemonsList pokemonsList={changedNameList} />);
 
-    expect(renderSpy).toHaveBeenCalledOnce();
+    expect(
+      screen.getByRole('cell', { name: 'charmander' })
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('cell', { name: 'bulbasaur' })
+    ).not.toBeInTheDocument();
   });
 
   it('URL of item in object change for same length', () => {
@@ -141,12 +126,10 @@ describe('Render PokemonList', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('Same data, but new arrau', () => {
-    const { rerender, getInstance } = renderWithRef(multiplePokemon);
-
-    const instance = getInstance();
-    if (!instance) throw new Error('instance is null');
-    const renderSpy = vi.spyOn(instance, 'render');
+  it('Same data, but new array', () => {
+    const { rerender } = render(
+      <PokemonsList pokemonsList={multiplePokemon} />
+    );
 
     const sameDataNewReference = [
       { name: 'bulbasaur', url: 'https://pokeapi.co/api/v2/pokemon/1/' },
@@ -154,10 +137,11 @@ describe('Render PokemonList', () => {
       { name: 'venusaur', url: 'https://pokeapi.co/api/v2/pokemon/3/' },
     ];
 
-    rerender(
-      <PokemonsList ref={() => {}} pokemonsList={sameDataNewReference} />
-    );
+    rerender(<PokemonsList pokemonsList={sameDataNewReference} />);
 
-    expect(renderSpy).not.toHaveBeenCalled();
+    expect(screen.getByText('Pokemons count: 3')).toBeInTheDocument();
+    expect(screen.getByRole('cell', { name: 'bulbasaur' })).toBeInTheDocument();
+    expect(screen.getByRole('cell', { name: 'ivysaur' })).toBeInTheDocument();
+    expect(screen.getByRole('cell', { name: 'venusaur' })).toBeInTheDocument();
   });
 });
