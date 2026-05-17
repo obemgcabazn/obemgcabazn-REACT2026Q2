@@ -1,7 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import { MemoryRouter } from 'react-router';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
-import App from '../App';
+import PokemonPage from '../components/PokemonPage';
 
 global.fetch = vi.fn();
 
@@ -45,20 +44,16 @@ const mockFetch = (data: unknown, ok = true) => {
   });
 };
 
-describe('App', () => {
+describe('PokemonPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockGet.mockReturnValue(null);
   });
 
-  it('Load ', async () => {
+  it('shows spinner then renders pokemon list', async () => {
     mockFetch({ results: [{ name: 'bulbasaur', url: '...' }] });
 
-    render(
-      <MemoryRouter>
-        <App />
-      </MemoryRouter>
-    );
+    render(<PokemonPage />);
 
     expect(screen.getByText('Loading...')).toBeInTheDocument();
 
@@ -67,15 +62,11 @@ describe('App', () => {
     });
   });
 
-  it('searchQuery exists in localStorage', async () => {
+  it('fetches pokemon by name when searchQuery exists in localStorage', async () => {
     mockGet.mockReturnValue('pikachu');
     mockFetch({ id: 25, name: 'pikachu', types: [], sprites: {} });
 
-    render(
-      <MemoryRouter>
-        <App />
-      </MemoryRouter>
-    );
+    render(<PokemonPage />);
 
     await waitFor(() => {
       expect(screen.getByText(/pikachu/i)).toBeInTheDocument();

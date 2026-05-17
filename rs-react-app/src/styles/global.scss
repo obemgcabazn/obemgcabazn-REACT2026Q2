@@ -1,12 +1,16 @@
+@import "modern-normalize/modern-normalize.css";
+
 :root {
   --white: #fefdff;
   --black: #151515;
   --accent: #ffe082;
   --accent-hover: #fbbf0e;
   --bg-base: #f3e8ff;
+  --bg-base-dark: #dbc1f6;
   --table-border: #bfb9c6;
   --effect-input-focus:
     inset 3px 3px 0 0 rgba(0, 0, 0, 0.25), -2px -2px 0 0 rgba(230, 235, 245, 1);
+  --effect-button-shadow: 3px 3px 0 0 rgba(0, 0, 0, 0.15);
   --shadow: -2px 2px 0 0 rgba(21, 21, 21, 1);
   --border-radius: 16px;
 }
@@ -18,7 +22,7 @@ html {
 }
 
 body {
-  background: var(--white);
+  background: var(--bg-base);
 }
 
 .container {
@@ -50,4 +54,13 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+table {
+  background: white;
 }
