@@ -1,35 +1,19 @@
-import { Component } from 'react';
+import { useState } from 'react';
 
-class Thrower extends Component {
-  render(): never | undefined {
-    throw new Error('Test Error');
-    // istanbul ignore next
-    return;
-  }
+function Thrower(): never {
+  throw new Error('Test Error');
 }
 
-interface TestErrorState {
-  shouldThrow: boolean;
-}
+export default function TestError() {
+  const [shouldThrow, setShouldThrow] = useState(false);
 
-export default class TestError extends Component<
-  Record<string, never>,
-  TestErrorState
-> {
-  state: TestErrorState = { shouldThrow: false };
-
-  handleClick = () => {
-    this.setState({ shouldThrow: true });
-  };
-
-  render() {
-    if (this.state.shouldThrow) {
-      return <Thrower />;
-    }
-    return (
-      <button className="button__main" onClick={this.handleClick}>
-        Test Error
-      </button>
-    );
+  if (shouldThrow) {
+    return <Thrower />;
   }
+
+  return (
+    <button className="button__main" onClick={() => setShouldThrow(true)}>
+      Test Error
+    </button>
+  );
 }
