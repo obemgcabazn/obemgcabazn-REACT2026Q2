@@ -1,0 +1,11 @@
+@use '../styles/global';
+
+.pokemon-details__header{
+  @extend .flex-aic-sb;
+}
+
+.pokemon-details {
+  .pokemon-card__image-container {
+    margin-bottom: 30px;
+  }
+}

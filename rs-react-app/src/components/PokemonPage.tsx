@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react';
 import StorageHelper from '../controller/StorageHelper.ts';
 import SearchForm from './SearchForm.tsx';
 import PokemonsList from './PokemonsList.tsx';
-import OnePokemon from './OnePokemon.tsx';
 import Spinner from './Spinner.tsx';
 import ErrorHandler from './ErrorHandler.tsx';
 import type { Pokemon } from 'pokeapi-typescript';
-import { useSearchParams } from 'react-router';
+import { Outlet, useSearchParams } from 'react-router';
+import OnePokemon from './OnePokemon.tsx';
 
 interface PokemonInList {
   name: string;
@@ -23,6 +23,7 @@ const PokemonPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const page = searchParams.get('page');
+  const pokemonId = searchParams.get('pokemonId');
 
   useEffect(() => {
     if (!page) {
@@ -86,12 +87,16 @@ const PokemonPage = () => {
   const bottomSection = () => {
     if (loading) return <Spinner />;
     if (error) return <ErrorHandler errorData={error} />;
+    if (Array.isArray(result)) {
+      return (
+        <div className="pokemon-list__wrapper">
+          <PokemonsList pokemonsList={result} />
+          {pokemonId && <Outlet />}
+        </div>
+      );
+    }
     if (searchQuery && result && !Array.isArray(result)) {
       return <OnePokemon pokemon={result} />;
-    }
-
-    if (Array.isArray(result)) {
-      return <PokemonsList pokemonsList={result} />;
     }
   };
   return (

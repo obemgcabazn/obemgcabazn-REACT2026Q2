@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router';
 import PokemonPage from './components/PokemonPage.tsx';
 import About from './components/About.tsx';
 import { NotFound } from './components/NotFound.tsx';
+import { PokemonDetails } from './components/PokemonDetails.tsx';
 
 const App = () => {
   return (
@@ -10,7 +11,9 @@ const App = () => {
       <Header />
       <div className="container">
         <Routes>
-          <Route path="/" element={<PokemonPage />} />
+          <Route path="/" element={<PokemonPage />}>
+            <Route index element={<PokemonDetails />} />
+          </Route>
           <Route path="/about" element={<About />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

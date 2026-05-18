@@ -67,6 +67,7 @@ table {
 
 .button__main {
   @extend .flex-center;
+  gap: 5px;
   background: white;
   min-height: 32px;
   padding: 8px 12px;
@@ -88,7 +89,6 @@ table {
     }
   }
 
-
   &.active {
     background: var(--bg-base-dark);
     transform: translateY(2px);
@@ -99,5 +99,15 @@ table {
     border-color: var(--table-border);
     box-shadow: none;
     cursor: not-allowed;
+  }
+}
+
+.button__link {
+  background: none;
+  border: none;
+  text-decoration: underline;
+
+  &:focus {
+    outline: none;
   }
 }
