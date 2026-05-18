@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router';
 import PokemonsList from '../components/PokemonsList.tsx';
+
+const renderWithRouter = (ui: React.ReactElement) =>
+  render(<MemoryRouter>{ui}</MemoryRouter>);
 
 const singlePokemon = [
   { name: 'bulbasaur', url: 'https://pokeapi.co/api/v2/pokemon/1/' },
@@ -14,7 +18,7 @@ const multiplePokemon = [
 
 describe('DOM tests PokemonList', () => {
   it('Empty Array', () => {
-    render(<PokemonsList pokemonsList={[]} />);
+    renderWithRouter(<PokemonsList pokemonsList={[]} />);
 
     expect(screen.getByText('Pokemons count: 0')).toBeInTheDocument();
 
@@ -33,12 +37,12 @@ describe('DOM tests PokemonList', () => {
   });
 
   it('Single Pokemon', () => {
-    render(<PokemonsList pokemonsList={singlePokemon} />);
+    renderWithRouter(<PokemonsList pokemonsList={singlePokemon} />);
     expect(screen.getByText('Pokemons count: 1')).toBeInTheDocument();
   });
 
   it('Heading "Name" exists', () => {
-    render(<PokemonsList pokemonsList={singlePokemon} />);
+    renderWithRouter(<PokemonsList pokemonsList={singlePokemon} />);
 
     expect(
       screen.getByRole('columnheader', { name: 'Name' })
@@ -46,7 +50,7 @@ describe('DOM tests PokemonList', () => {
   });
 
   it('Heading "Description" exists', () => {
-    render(<PokemonsList pokemonsList={singlePokemon} />);
+    renderWithRouter(<PokemonsList pokemonsList={singlePokemon} />);
 
     expect(
       screen.getByRole('columnheader', { name: 'Description' })
@@ -54,7 +58,7 @@ describe('DOM tests PokemonList', () => {
   });
 
   it('Multiple Pokemons', () => {
-    render(<PokemonsList pokemonsList={multiplePokemon} />);
+    renderWithRouter(<PokemonsList pokemonsList={multiplePokemon} />);
     expect(screen.getByText('Pokemons count: 3')).toBeInTheDocument();
   });
 });
@@ -62,10 +66,16 @@ describe('DOM tests PokemonList', () => {
 describe('Render PokemonList', () => {
   it('Prevent to call render', () => {
     const { rerender } = render(
-      <PokemonsList pokemonsList={multiplePokemon} />
+      <MemoryRouter>
+        <PokemonsList pokemonsList={multiplePokemon} />
+      </MemoryRouter>
     );
 
-    rerender(<PokemonsList pokemonsList={multiplePokemon} />);
+    rerender(
+      <MemoryRouter>
+        <PokemonsList pokemonsList={multiplePokemon} />
+      </MemoryRouter>
+    );
 
     expect(screen.getByText('Pokemons count: 3')).toBeInTheDocument();
     expect(screen.getAllByRole('row')).toHaveLength(4);
@@ -73,7 +83,9 @@ describe('Render PokemonList', () => {
 
   it('Length change', () => {
     const { rerender } = render(
-      <PokemonsList pokemonsList={multiplePokemon} />
+      <MemoryRouter>
+        <PokemonsList pokemonsList={multiplePokemon} />
+      </MemoryRouter>
     );
 
     const longerList = [
@@ -81,13 +93,19 @@ describe('Render PokemonList', () => {
       { name: 'charmander', url: 'https://pokeapi.co/api/v2/pokemon/4/' },
     ];
 
-    rerender(<PokemonsList pokemonsList={longerList} />);
+    rerender(
+      <MemoryRouter>
+        <PokemonsList pokemonsList={longerList} />
+      </MemoryRouter>
+    );
     expect(screen.getByText('Pokemons count: 4')).toBeInTheDocument();
   });
 
   it('Name of item in object change for same length', () => {
     const { rerender } = render(
-      <PokemonsList pokemonsList={multiplePokemon} />
+      <MemoryRouter>
+        <PokemonsList pokemonsList={multiplePokemon} />
+      </MemoryRouter>
     );
 
     const changedNameList = [
@@ -95,7 +113,11 @@ describe('Render PokemonList', () => {
       multiplePokemon[1],
     ];
 
-    rerender(<PokemonsList pokemonsList={changedNameList} />);
+    rerender(
+      <MemoryRouter>
+        <PokemonsList pokemonsList={changedNameList} />
+      </MemoryRouter>
+    );
 
     expect(
       screen.getByRole('cell', { name: 'charmander' })
@@ -107,7 +129,9 @@ describe('Render PokemonList', () => {
 
   it('URL of item in object change for same length', () => {
     const { rerender } = render(
-      <PokemonsList pokemonsList={multiplePokemon} />
+      <MemoryRouter>
+        <PokemonsList pokemonsList={multiplePokemon} />
+      </MemoryRouter>
     );
 
     const newUrl = 'https://pokeapi.co/api/v2/pokemon/999/';
@@ -116,7 +140,11 @@ describe('Render PokemonList', () => {
       multiplePokemon[1],
     ];
 
-    rerender(<PokemonsList pokemonsList={changedUrlList} />);
+    rerender(
+      <MemoryRouter>
+        <PokemonsList pokemonsList={changedUrlList} />
+      </MemoryRouter>
+    );
 
     expect(
       screen.getByRole('cell', { name: `URL: ${newUrl}` })
@@ -128,7 +156,9 @@ describe('Render PokemonList', () => {
 
   it('Same data, but new array', () => {
     const { rerender } = render(
-      <PokemonsList pokemonsList={multiplePokemon} />
+      <MemoryRouter>
+        <PokemonsList pokemonsList={multiplePokemon} />
+      </MemoryRouter>
     );
 
     const sameDataNewReference = [
@@ -137,7 +167,11 @@ describe('Render PokemonList', () => {
       { name: 'venusaur', url: 'https://pokeapi.co/api/v2/pokemon/3/' },
     ];
 
-    rerender(<PokemonsList pokemonsList={sameDataNewReference} />);
+    rerender(
+      <MemoryRouter>
+        <PokemonsList pokemonsList={sameDataNewReference} />
+      </MemoryRouter>
+    );
 
     expect(screen.getByText('Pokemons count: 3')).toBeInTheDocument();
     expect(screen.getByRole('cell', { name: 'bulbasaur' })).toBeInTheDocument();

@@ -22,3 +22,9 @@
   margin-top: 20px;
   margin-bottom: 20px;
 }
+
+.pagination {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+}

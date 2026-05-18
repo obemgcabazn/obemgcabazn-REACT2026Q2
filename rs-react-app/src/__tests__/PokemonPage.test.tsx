@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import PokemonPage from '../components/PokemonPage';
 
@@ -53,7 +54,11 @@ describe('PokemonPage', () => {
   it('shows spinner then renders pokemon list', async () => {
     mockFetch({ results: [{ name: 'bulbasaur', url: '...' }] });
 
-    render(<PokemonPage />);
+    render(
+      <MemoryRouter>
+        <PokemonPage />
+      </MemoryRouter>
+    );
 
     expect(screen.getByText('Loading...')).toBeInTheDocument();
 
@@ -66,7 +71,11 @@ describe('PokemonPage', () => {
     mockGet.mockReturnValue('pikachu');
     mockFetch({ id: 25, name: 'pikachu', types: [], sprites: {} });
 
-    render(<PokemonPage />);
+    render(
+      <MemoryRouter>
+        <PokemonPage />
+      </MemoryRouter>
+    );
 
     await waitFor(() => {
       expect(screen.getByText(/pikachu/i)).toBeInTheDocument();

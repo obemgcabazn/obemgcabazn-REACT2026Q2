@@ -27,7 +27,7 @@ export default class TestError extends Component<
       return <Thrower />;
     }
     return (
-      <button className="button__header" onClick={this.handleClick}>
+      <button className="button__main" onClick={this.handleClick}>
         Test Error
       </button>
     );

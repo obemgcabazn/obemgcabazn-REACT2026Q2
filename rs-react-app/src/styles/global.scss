@@ -64,3 +64,40 @@ h1 {
 table {
   background: white;
 }
+
+.button__main {
+  @extend .flex-center;
+  background: white;
+  min-height: 32px;
+  padding: 8px 12px;
+  border: 1.5px solid var(--black);
+  border-radius: 8px;
+  box-shadow: var(--effect-button-shadow);
+
+  font: {
+    family: 'Lexend', sans-serif;
+    weight: bold;
+    size: 13px;
+  }
+  color: var(--black);
+  text-decoration: none;
+
+  @media(hover: hover) {
+    &:hover:not([disabled]) {
+      background: var(--table-border);
+    }
+  }
+
+
+  &.active {
+    background: var(--bg-base-dark);
+    transform: translateY(2px);
+    box-shadow: none;
+  }
+  &[disabled] {
+    color: var(--table-border);
+    border-color: var(--table-border);
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+}

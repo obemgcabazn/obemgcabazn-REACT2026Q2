@@ -6,6 +6,7 @@ import OnePokemon from './OnePokemon.tsx';
 import Spinner from './Spinner.tsx';
 import ErrorHandler from './ErrorHandler.tsx';
 import type { Pokemon } from 'pokeapi-typescript';
+import { useSearchParams } from 'react-router';
 
 interface PokemonInList {
   name: string;
@@ -19,21 +20,32 @@ const PokemonPage = () => {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<PokemonInList[] | Pokemon | null>(null);
 
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const page = searchParams.get('page');
+
   useEffect(() => {
+    if (!page) {
+      setSearchParams({ page: '1' });
+      return;
+    }
     if (searchQuery) {
       fetchPokemonByName(searchQuery.toString());
     } else {
-      fetchAllPokemons();
+      fetchAllPokemons(Number(page));
     }
-  }, [savedQuery]);
+  }, [savedQuery, page]);
 
-  const fetchAllPokemons = async () => {
+  const fetchAllPokemons = async (page: number = 1) => {
     setLoading(true);
     setError(null);
 
+    const PAGE_SIZE = 10;
+
     try {
+      const offset = (page - 1) * PAGE_SIZE;
       const response = await fetch(
-        `https://pokeapi.co/api/v2/pokemon/?limit=10`
+        `https://pokeapi.co/api/v2/pokemon/?limit=${PAGE_SIZE}&offset=${offset}`
       );
       const data: { results: PokemonInList[] } = await response.json();
       if (data) {

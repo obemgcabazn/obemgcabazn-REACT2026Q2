@@ -1,5 +1,6 @@
 import './pokemon-list.scss';
 import React from 'react';
+import { useSearchParams } from 'react-router';
 
 interface PokemonInList {
   name: string;
@@ -11,11 +12,40 @@ interface PokemonsListProps {
 }
 
 function PokemonsListComponent(props: PokemonsListProps) {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const nextPage = () => {
+    const newPage = Number(searchParams.get('page')) + 1;
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set('page', String(newPage));
+    setSearchParams(newParams);
+  };
+  const prevPage = () => {
+    const page = Number(searchParams.get('page'));
+    if (page > 1) {
+      const newPage = page - 1;
+      const newParams = new URLSearchParams(searchParams);
+      newParams.set('page', String(newPage));
+      setSearchParams(newParams);
+    }
+  };
+
   return (
     <div className="pokemon-list">
-      <p className="pokemon-list__count">
-        Pokemons count: {props.pokemonsList.length}
-      </p>
+      <div className="flex-aic-sb">
+        <p className="pokemon-list__count">
+          Pokemons count: {props.pokemonsList.length}
+        </p>
+        <div className="pagination">
+          <button className="button__main" onClick={prevPage}>
+            Prev
+          </button>
+          <span className="button__main">{searchParams.get('page')}</span>
+          <button className="button__main" onClick={nextPage}>
+            Next
+          </button>
+        </div>
+      </div>
       <table>
         <thead>
           <tr>
