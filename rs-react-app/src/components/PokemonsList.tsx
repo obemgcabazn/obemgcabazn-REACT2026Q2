@@ -30,6 +30,13 @@ function PokemonsListComponent(props: PokemonsListProps) {
     }
   };
 
+  const handleSelectPokemon = (url: string) => {
+    const pokemonId = new URL(url).pathname.split('/').filter(Boolean).pop();
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set('pokemonId', String(pokemonId));
+    setSearchParams(newParams);
+  };
+
   return (
     <div className="pokemon-list">
       <div className="flex-aic-sb">
@@ -56,7 +63,14 @@ function PokemonsListComponent(props: PokemonsListProps) {
         <tbody>
           {props.pokemonsList.map((pokemon: PokemonInList, index: number) => (
             <tr key={index}>
-              <td>{pokemon.name}</td>
+              <td>
+                <button
+                  className="button__link"
+                  onClick={() => handleSelectPokemon(pokemon.url)}
+                >
+                  {pokemon.name}
+                </button>
+              </td>
               <td>URL: {pokemon.url}</td>
             </tr>
           ))}

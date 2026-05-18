@@ -3,7 +3,7 @@ import { MemoryRouter } from 'react-router';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import PokemonPage from '../components/PokemonPage';
 
-global.fetch = vi.fn();
+globalThis.fetch = vi.fn();
 
 const { mockGet, mockSet } = vi.hoisted(() => ({
   mockGet: vi.fn(),
@@ -38,7 +38,7 @@ vi.mock('../components/OnePokemon', () => ({
 }));
 
 const mockFetch = (data: unknown, ok = true) => {
-  (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+  (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
     ok,
     status: ok ? 200 : 404,
     json: async () => data,

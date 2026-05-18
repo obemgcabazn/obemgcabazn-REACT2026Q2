@@ -26,9 +26,5 @@ export default defineConfig({
         lines: 50,
       },
     },
-    moduleNameMapper: {
-      '\\.(svg|png|jpg|jpeg|gif|webp)$': '<rootDir>/src/__mocks__/fileMock.ts',
-      '\\.(scss|css)$': '<rootDir>/src/__mocks__/fileMock.ts',
-    },
   },
 });

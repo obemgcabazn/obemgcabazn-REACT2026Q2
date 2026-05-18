@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect } from 'vitest';
+import { beforeEach, describe, expect, vi } from 'vitest';
 import storageHelper from '../controller/StorageHelper.ts';
 import StorageHelper from '../controller/StorageHelper.ts';
 
@@ -19,12 +19,16 @@ describe('StorageHelper', () => {
   });
 
   it('throw error in JSON.stringify', () => {
+    const consoleError = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
     const circular: Record<string, unknown> = {};
     circular.self = circular;
 
     const result = StorageHelper.set('bad', circular);
 
     expect(result).toBe(false);
+    consoleError.mockRestore();
   });
 
   it('key not exist', () => {
