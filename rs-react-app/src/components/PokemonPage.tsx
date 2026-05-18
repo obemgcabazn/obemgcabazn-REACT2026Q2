@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import StorageHelper from '../controller/StorageHelper.ts';
+import useLocalStorage from '../hooks/useLocalStorage.tsx';
 import SearchForm from './SearchForm.tsx';
 import PokemonsList from './PokemonsList.tsx';
 import Spinner from './Spinner.tsx';
@@ -14,8 +14,10 @@ interface PokemonInList {
 }
 
 const PokemonPage = () => {
-  const savedQuery = StorageHelper.get<string>('searchQuery') ?? '';
-  const [searchQuery, setSearchQuery] = useState(savedQuery);
+  const [searchQuery, setSearchQuery] = useLocalStorage<string>(
+    'searchQuery',
+    ''
+  );
   const [error, setError] = useState<Error | null>(null);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<PokemonInList[] | Pokemon | null>(null);
@@ -31,11 +33,11 @@ const PokemonPage = () => {
       return;
     }
     if (searchQuery) {
-      fetchPokemonByName(searchQuery.toString());
+      fetchPokemonByName(searchQuery);
     } else {
       fetchAllPokemons(Number(page));
     }
-  }, [savedQuery, page]);
+  }, [searchQuery, page]);
 
   const fetchAllPokemons = async (page: number = 1) => {
     setLoading(true);
@@ -99,9 +101,17 @@ const PokemonPage = () => {
       return <OnePokemon pokemon={result} />;
     }
   };
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set('page', '1');
+    newParams.delete('pokemonId');
+    setSearchParams(newParams);
+  };
+
   return (
     <>
-      <SearchForm searchQuery={searchQuery} onSearch={setSearchQuery} />
+      <SearchForm searchQuery={searchQuery} onSearch={handleSearch} />
       {bottomSection()}
     </>
   );

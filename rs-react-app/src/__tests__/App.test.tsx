@@ -5,18 +5,6 @@ import App from '../App';
 
 globalThis.fetch = vi.fn();
 
-const { mockGet, mockSet } = vi.hoisted(() => ({
-  mockGet: vi.fn(),
-  mockSet: vi.fn(),
-}));
-
-vi.mock('../controller/StorageHelper', () => ({
-  default: {
-    get: mockGet,
-    set: mockSet,
-  },
-}));
-
 vi.mock('../components/Spinner', () => ({
   default: () => <div>Loading...</div>,
 }));
@@ -48,7 +36,7 @@ const mockFetch = (data: unknown, ok = true) => {
 describe('App', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGet.mockReturnValue(null);
+    localStorage.clear();
   });
 
   it('Load ', async () => {
@@ -68,7 +56,7 @@ describe('App', () => {
   });
 
   it('searchQuery exists in localStorage', async () => {
-    mockGet.mockReturnValue('pikachu');
+    localStorage.setItem('searchQuery', JSON.stringify('pikachu'));
     mockFetch({ id: 25, name: 'pikachu', types: [], sprites: {} });
 
     render(

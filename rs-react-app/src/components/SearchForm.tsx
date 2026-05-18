@@ -1,6 +1,5 @@
 import './search-form.scss';
 import React, { useState } from 'react';
-import StorageHelper from '../controller/StorageHelper.ts';
 
 interface SearchProps {
   searchQuery: string;
@@ -19,7 +18,6 @@ const SearchForm = ({ searchQuery, onSearch }: SearchProps) => {
 
   const searchStart = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    StorageHelper.set('searchQuery', search);
     onSearch(search);
   };
 

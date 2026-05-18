@@ -5,18 +5,6 @@ import PokemonPage from '../components/PokemonPage';
 
 globalThis.fetch = vi.fn();
 
-const { mockGet, mockSet } = vi.hoisted(() => ({
-  mockGet: vi.fn(),
-  mockSet: vi.fn(),
-}));
-
-vi.mock('../controller/StorageHelper', () => ({
-  default: {
-    get: mockGet,
-    set: mockSet,
-  },
-}));
-
 vi.mock('../components/Spinner', () => ({
   default: () => <div>Loading...</div>,
 }));
@@ -48,7 +36,7 @@ const mockFetch = (data: unknown, ok = true) => {
 describe('PokemonPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGet.mockReturnValue(null);
+    localStorage.clear();
   });
 
   it('shows spinner then renders pokemon list', async () => {
@@ -68,7 +56,7 @@ describe('PokemonPage', () => {
   });
 
   it('fetches pokemon by name when searchQuery exists in localStorage', async () => {
-    mockGet.mockReturnValue('pikachu');
+    localStorage.setItem('searchQuery', JSON.stringify('pikachu'));
     mockFetch({ id: 25, name: 'pikachu', types: [], sprites: {} });
 
     render(
