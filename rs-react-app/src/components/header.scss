@@ -1,0 +1,12 @@
+@use '../styles/global';
+
+header {
+  background: var(--accent-hover);
+  margin-bottom: 50px;
+  box-shadow: var(--shadow);
+  nav {
+    display: flex;
+    gap: 10px;
+  }
+}
+

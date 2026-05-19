@@ -2,14 +2,6 @@ import { describe, expect, it, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SearchForm from '../components/SearchForm.tsx';
-import StorageHelper from '../controller/StorageHelper.ts';
-
-vi.mock('./../controller/StorageHelper', () => ({
-  default: {
-    get: vi.fn(),
-    set: vi.fn(),
-  },
-}));
 
 vi.mock('./search-form.scss', () => ({}));
 
@@ -50,6 +42,7 @@ describe('SearchForm', () => {
     await user.type(screen.getByRole('textbox'), '  bulbasaur  ');
     expect(screen.getByRole('textbox')).toHaveValue('bulbasaur');
   });
+
   it('submit form value', async () => {
     const user = userEvent.setup();
     render(<SearchForm searchQuery="" onSearch={onSearchMock} />);
@@ -89,11 +82,11 @@ describe('SearchForm - searchStart', () => {
     expect(preventDefaultSpy).toHaveBeenCalled();
   });
 
-  it('StorageHelper.set set value in storage', () => {
+  it('calls onSearch with current input value on submit', () => {
     render(<SearchForm searchQuery="pikachu" onSearch={onSearchMock} />);
 
     fireEvent.click(screen.getByRole('button', { name: /search/i }));
 
-    expect(StorageHelper.set).toHaveBeenCalledWith('searchQuery', 'pikachu');
+    expect(onSearchMock).toHaveBeenCalledWith('pikachu');
   });
 });
