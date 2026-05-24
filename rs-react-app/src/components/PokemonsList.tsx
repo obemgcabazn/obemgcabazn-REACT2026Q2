@@ -69,7 +69,7 @@ function PokemonsListComponent(props: PokemonsListProps) {
                 <input
                   type="checkbox"
                   className="pokemon-list-checkbox"
-                  onClick={() => togglePokemon(pokemon.name)}
+                  onChange={() => togglePokemon(pokemon.name)}
                   checked={selectedPokemons.includes(pokemon.name)}
                 />
                 <button
