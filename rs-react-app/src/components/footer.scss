@@ -1,0 +1,13 @@
+footer {
+  position: sticky;
+  bottom: 0;
+  padding: 20px 0;
+  border-top: 2px solid var(--black);
+  background: var(--bg-base-active);
+
+  .container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+}

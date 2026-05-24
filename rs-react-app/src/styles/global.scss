@@ -36,9 +36,9 @@ html {
     --bg-base-active:  #9260c5;
 
     --text-color-base: white;
-    --btn-bg: #5e5e5e;
-    --btn-border: #f3e8ff;
-    --btn-color: #ffffff;
+    --btn-bg: #f3e8ff;
+    --btn-border: #151515;
+    --btn-color: #151515;
 
     --table-bg: #5e5e5e;
     --table-th-bg: #9260c5;
@@ -154,4 +154,8 @@ table {
   &:focus {
     outline: none;
   }
+}
+
+.mb-5 {
+  margin-bottom: 5rem;
 }

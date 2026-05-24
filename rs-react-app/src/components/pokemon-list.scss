@@ -6,8 +6,7 @@
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
 
-    th,
-    td {
+    th, td {
       padding: 7px 15px;
       border-bottom: 1px solid var(--table-border);
     }
@@ -15,6 +14,13 @@
     th {
       background: var(--table-th-bg);
     }
+  }
+
+  .pokemon-list-checkbox {
+    margin-right: 10px;
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
   }
 }
 
