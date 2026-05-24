@@ -1,6 +1,7 @@
 import './header.scss';
 import TestError from './TestError.tsx';
 import { NavLink } from 'react-router';
+import { ThemeSwitcher } from './ThemeSwitcher.tsx';
 
 export const Header = () => {
   return (
@@ -15,6 +16,7 @@ export const Header = () => {
             About
           </NavLink>
           <TestError />
+          <ThemeSwitcher />
         </nav>
       </div>
     </header>

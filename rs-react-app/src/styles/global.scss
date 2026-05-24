@@ -6,23 +6,62 @@
   --accent: #ffe082;
   --accent-hover: #fbbf0e;
   --bg-base: #f3e8ff;
-  --bg-base-dark: #dbc1f6;
+  --bg-base-active: #dbc1f6;
   --table-border: #bfb9c6;
   --effect-input-focus:
     inset 3px 3px 0 0 rgba(0, 0, 0, 0.25), -2px -2px 0 0 rgba(230, 235, 245, 1);
   --effect-button-shadow: 3px 3px 0 0 rgba(0, 0, 0, 0.15);
   --shadow: -2px 2px 0 0 rgba(21, 21, 21, 1);
   --border-radius: 16px;
+  --text-color-base: #151515;
+
+  --btn-border: #151515;
+  --btn-color: #151515;
+  --btn-bg: white;
+
+  --table-bg: white;
+  --table-th-bg: #ffe082;
+
+  --link-color: #070acc;
+  --link-color-visited: #700fcd;
 }
 
 html {
   font-family: 'Faculty Glyphic', sans-serif;
   font-weight: 400;
   font-style: normal;
+
+  &.dark {
+    --bg-base: #3c3c3c;
+    --bg-base-active:  #9260c5;
+
+    --text-color-base: white;
+    --btn-bg: #5e5e5e;
+    --btn-border: #f3e8ff;
+    --btn-color: #ffffff;
+
+    --table-bg: #5e5e5e;
+    --table-th-bg: #9260c5;
+
+    --link-color: #85aaff;
+    --link-color-visited: #c78dff;
+
+    --effect-input-focus:
+            inset 3px 3px 0 0 rgba(0, 0, 0, 0.25), -2px -2px 0 0 rgb(67, 67, 67);
+  }
 }
 
 body {
   background: var(--bg-base);
+  color: var(--text-color-base);
+}
+
+a {
+  color: var(--link-color);
+
+  &:visited {
+    color: var(--link-color-visited);
+  }
 }
 
 .container {
@@ -62,17 +101,18 @@ h1 {
 }
 
 table {
-  background: white;
+  background: var(--table-bg);
 }
 
 .button__main {
   @extend .flex-center;
+  flex-shrink: 0;
   gap: 5px;
-  background: white;
+  background: var(--btn-bg);
   min-height: 32px;
-  padding: 8px 12px;
-  border: 1.5px solid var(--black);
-  border-radius: 8px;
+  padding: 8px 16px;
+  border: 1.5px solid var(--btn-border);
+  border-radius: 16px;
   box-shadow: var(--effect-button-shadow);
 
   font: {
@@ -80,7 +120,7 @@ table {
     weight: bold;
     size: 13px;
   }
-  color: var(--black);
+  color: var(--btn-color);
   text-decoration: none;
 
   @media(hover: hover) {
@@ -90,7 +130,7 @@ table {
   }
 
   &.active {
-    background: var(--bg-base-dark);
+    background: var(--bg-base-active);
     transform: translateY(2px);
     box-shadow: none;
   }
@@ -100,12 +140,16 @@ table {
     box-shadow: none;
     cursor: not-allowed;
   }
+  &:visited {
+    color: var(--btn-color);
+  }
 }
 
 .button__link {
   background: none;
   border: none;
   text-decoration: underline;
+  color: var(--link-color);
 
   &:focus {
     outline: none;

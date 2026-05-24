@@ -17,7 +17,8 @@
 
   &:focus {
     outline: none;
-    background: var(--bg-base);
+    color: var(--text-color-base);
+    background: var(--btn-bg);
     box-shadow: var(--effect-input-focus);
   }
 }

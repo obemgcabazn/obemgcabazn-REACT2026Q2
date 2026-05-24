@@ -1,12 +1,22 @@
 @use '../styles/global';
 
 header {
+
+
+  --effect-button-shadow: 3px 3px 0 0 rgba(0, 0, 0, 0.15);
+  --effect-button-active: -1px -1px 0 0 rgba(0, 0, 0, 0.15);
+
   background: var(--accent-hover);
   margin-bottom: 50px;
   box-shadow: var(--shadow);
+
   nav {
     display: flex;
     gap: 10px;
+  }
+
+  h3 {
+    color: var(--black)
   }
 }
 

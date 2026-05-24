@@ -1,4 +1,10 @@
-import { createContext, useContext } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+} from 'react';
 import useLocalStorage from '../hooks/useLocalStorage.tsx';
 
 type Theme = 'light' | 'dark';
@@ -8,23 +14,26 @@ interface ThemeContextValue {
   toggleTheme: () => void;
 }
 
-const ThemeContext = createContext<ThemeContextValue | null>(null);
+const ThemeContext = createContext<ThemeContextValue>({
+  theme: 'light',
+  toggleTheme: () => {},
+});
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useLocalStorage<Theme>('theme', 'light');
 
-  const toggleTheme = () => {
-    const anotherTheme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(anotherTheme);
-    document.documentElement.classList.toggle('dark', anotherTheme === 'dark');
-  };
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+  }, [theme]);
 
-  document.documentElement.classList.toggle('dark', theme === 'dark');
+  const toggleTheme = useCallback(() => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  }, [theme, setTheme]);
+
+  const value = useMemo(() => ({ theme, toggleTheme }), [theme, toggleTheme]);
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      {children}
-    </ThemeContext.Provider>
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
   );
 }
 
