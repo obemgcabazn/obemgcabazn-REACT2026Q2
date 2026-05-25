@@ -3,7 +3,7 @@
 }
 
 .search__input {
-  background: var(--white);
+  background: var(--btn-bg);
   padding: 16px;
   border-width: 2px;
   border-style: solid;
@@ -17,7 +17,7 @@
 
   &:focus {
     outline: none;
-    color: var(--text-color-base);
+    color: var(--black);
     background: var(--btn-bg);
     box-shadow: var(--effect-input-focus);
   }
