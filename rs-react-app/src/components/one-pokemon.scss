@@ -24,7 +24,7 @@ $type-colors: (
   gap: 40px;
   align-items: flex-start;
   padding: 32px;
-  background: var(--white);
+  background: var(--table-bg);
   border: 2px solid var(--black);
   border-radius: var(--border-radius);
   box-shadow: var(--shadow);
@@ -77,7 +77,7 @@ $type-colors: (
   &__id {
     font-size: 14px;
     font-weight: 700;
-    color: var(--black);
+    color: var(--text-color-base);
     opacity: 0.45;
     letter-spacing: 0.05em;
   }
@@ -87,7 +87,7 @@ $type-colors: (
     font-size: 28px;
     font-weight: 700;
     text-transform: capitalize;
-    color: var(--black);
+    color: var(--text-color-base);
     line-height: 1;
   }
 
@@ -108,14 +108,14 @@ $type-colors: (
     gap: 2px;
     padding: 10px 16px;
     background: var(--bg-base);
-    border: 2px solid var(--black);
+    border: 2px solid var(--text-color-base);
     border-radius: 10px;
     min-width: 72px;
   }
 
   &__experience {
     font-size: 14px;
-    color: var(--black);
+    color: var(--text-color-base);
     opacity: 0.7;
   }
 }
@@ -125,14 +125,14 @@ $type-colors: (
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--black);
+  color: var(--text-color-base);
   opacity: 0.5;
 }
 
 .detail-value {
   font-size: 18px;
   font-weight: 700;
-  color: var(--black);
+  color: var(--text-color-base);
 }
 
 .pokemon-type {

@@ -1,6 +1,7 @@
 import './pokemon-list.scss';
 import React from 'react';
 import { useSearchParams } from 'react-router';
+import useStore from '../store/Store.tsx';
 
 interface PokemonInList {
   name: string;
@@ -13,6 +14,7 @@ interface PokemonsListProps {
 
 function PokemonsListComponent(props: PokemonsListProps) {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { selectedPokemons, togglePokemon } = useStore();
 
   const nextPage = () => {
     const newPage = Number(searchParams.get('page')) + 1;
@@ -64,6 +66,12 @@ function PokemonsListComponent(props: PokemonsListProps) {
           {props.pokemonsList.map((pokemon: PokemonInList, index: number) => (
             <tr key={index}>
               <td>
+                <input
+                  type="checkbox"
+                  className="pokemon-list-checkbox"
+                  onChange={() => togglePokemon(pokemon.name)}
+                  checked={selectedPokemons.includes(pokemon.name)}
+                />
                 <button
                   className="button__link"
                   onClick={() => handleSelectPokemon(pokemon.url)}

@@ -4,12 +4,13 @@ import PokemonPage from './components/PokemonPage.tsx';
 import About from './components/About.tsx';
 import { NotFound } from './components/NotFound.tsx';
 import { PokemonDetails } from './components/PokemonDetails.tsx';
+import Footer from './components/footer.tsx';
 
 const App = () => {
   return (
     <>
       <Header />
-      <div className="container">
+      <div className="container mb-5">
         <Routes>
           <Route path="/" element={<PokemonPage />}>
             <Route index element={<PokemonDetails />} />
@@ -18,6 +19,7 @@ const App = () => {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
+      <Footer />
     </>
   );
 };

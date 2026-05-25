@@ -19,9 +19,11 @@ const ErrorHandler = (props: ErrorProps) => {
   };
 
   return (
-    <div className="text-center">
+    <div className="container">
       <p className="error-message">{getMessage()}</p>
-      <button onClick={() => window.location.reload()}>Reload Page</button>
+      <button className="button__main" onClick={() => window.location.reload()}>
+        Reload Page
+      </button>
     </div>
   );
 };

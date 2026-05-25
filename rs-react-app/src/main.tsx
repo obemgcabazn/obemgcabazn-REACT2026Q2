@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import ErrorBoundary from './components/ErrorBoundary.tsx';
 import { BrowserRouter } from 'react-router';
+import { ThemeProvider } from './context/ThemeContext.tsx';
 
 const rootElement = document.getElementById('root');
 if (rootElement !== null) {
@@ -11,7 +12,9 @@ if (rootElement !== null) {
     <StrictMode>
       <BrowserRouter>
         <ErrorBoundary>
-          <App />
+          <ThemeProvider>
+            <App />
+          </ThemeProvider>
         </ErrorBoundary>
       </BrowserRouter>
     </StrictMode>
