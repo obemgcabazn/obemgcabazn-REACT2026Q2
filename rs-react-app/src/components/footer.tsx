@@ -1,5 +1,5 @@
 import './footer.scss';
-import useStore from '../store/store.tsx';
+import useStore from '../store/Store.tsx';
 import { useState } from 'react';
 import type { Pokemon } from 'pokeapi-typescript';
 import ErrorHandler from './ErrorHandler.tsx';

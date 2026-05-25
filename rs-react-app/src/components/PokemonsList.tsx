@@ -1,7 +1,7 @@
 import './pokemon-list.scss';
 import React from 'react';
 import { useSearchParams } from 'react-router';
-import useStore from '../store/store.tsx';
+import useStore from '../store/Store.tsx';
 
 interface PokemonInList {
   name: string;
