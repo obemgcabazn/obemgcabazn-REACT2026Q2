@@ -1,7 +1,13 @@
-import { describe, expect, it } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router';
+import { describe, expect, it, beforeEach } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { MemoryRouter, useSearchParams } from 'react-router';
 import PokemonsList from '../components/PokemonsList.tsx';
+import useStore from '../store/Store.tsx';
+
+const SearchParamsDisplay = () => {
+  const [params] = useSearchParams();
+  return <div data-testid="search-params">{params.toString()}</div>;
+};
 
 const renderWithRouter = (ui: React.ReactElement) =>
   render(<MemoryRouter>{ui}</MemoryRouter>);
@@ -154,7 +160,34 @@ describe('Render PokemonList', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('Same data, but new array', () => {
+  it('item name differs at same length triggers re-render', () => {
+    const { rerender } = render(
+      <MemoryRouter>
+        <PokemonsList pokemonsList={multiplePokemon} />
+      </MemoryRouter>
+    );
+
+    const changedNameSameLength = [
+      { name: 'charmander', url: multiplePokemon[0].url },
+      multiplePokemon[1],
+      multiplePokemon[2],
+    ];
+
+    rerender(
+      <MemoryRouter>
+        <PokemonsList pokemonsList={changedNameSameLength} />
+      </MemoryRouter>
+    );
+
+    expect(
+      screen.getByRole('button', { name: 'charmander' })
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'bulbasaur' })
+    ).not.toBeInTheDocument();
+  });
+
+  it('same data new array does not re-render', () => {
     const { rerender } = render(
       <MemoryRouter>
         <PokemonsList pokemonsList={multiplePokemon} />
@@ -177,5 +210,106 @@ describe('Render PokemonList', () => {
     expect(screen.getByRole('cell', { name: 'bulbasaur' })).toBeInTheDocument();
     expect(screen.getByRole('cell', { name: 'ivysaur' })).toBeInTheDocument();
     expect(screen.getByRole('cell', { name: 'venusaur' })).toBeInTheDocument();
+  });
+});
+
+describe('Pagination', () => {
+  it('Next button increments page in search params', () => {
+    render(
+      <MemoryRouter initialEntries={['/?page=1']}>
+        <PokemonsList pokemonsList={singlePokemon} />
+        <SearchParamsDisplay />
+      </MemoryRouter>
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+    expect(screen.getByTestId('search-params').textContent).toBe('page=2');
+  });
+
+  it('Prev button decrements page when page > 1', () => {
+    render(
+      <MemoryRouter initialEntries={['/?page=3']}>
+        <PokemonsList pokemonsList={singlePokemon} />
+        <SearchParamsDisplay />
+      </MemoryRouter>
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Prev' }));
+    expect(screen.getByTestId('search-params').textContent).toBe('page=2');
+  });
+
+  it('Prev button does nothing when page is 1', () => {
+    render(
+      <MemoryRouter initialEntries={['/?page=1']}>
+        <PokemonsList pokemonsList={singlePokemon} />
+        <SearchParamsDisplay />
+      </MemoryRouter>
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Prev' }));
+    expect(screen.getByTestId('search-params').textContent).toBe('page=1');
+  });
+
+  it('displays current page number', () => {
+    render(
+      <MemoryRouter initialEntries={['/?page=5']}>
+        <PokemonsList pokemonsList={singlePokemon} />
+      </MemoryRouter>
+    );
+    expect(screen.getByText('5')).toBeInTheDocument();
+  });
+});
+
+describe('Pokemon selection', () => {
+  beforeEach(() => {
+    useStore.setState({ selectedPokemons: [] });
+  });
+
+  it('clicking pokemon name sets pokemonId in search params', () => {
+    render(
+      <MemoryRouter>
+        <PokemonsList pokemonsList={singlePokemon} />
+        <SearchParamsDisplay />
+      </MemoryRouter>
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'bulbasaur' }));
+    expect(screen.getByTestId('search-params').textContent).toBe('pokemonId=1');
+  });
+
+  it('checking checkbox adds pokemon to store', () => {
+    render(
+      <MemoryRouter>
+        <PokemonsList pokemonsList={singlePokemon} />
+      </MemoryRouter>
+    );
+    fireEvent.click(screen.getByRole('checkbox'));
+    expect(useStore.getState().selectedPokemons).toContain('bulbasaur');
+  });
+
+  it('unchecking checkbox removes pokemon from store', () => {
+    useStore.setState({ selectedPokemons: ['bulbasaur'] });
+    render(
+      <MemoryRouter>
+        <PokemonsList pokemonsList={singlePokemon} />
+      </MemoryRouter>
+    );
+    fireEvent.click(screen.getByRole('checkbox'));
+    expect(useStore.getState().selectedPokemons).not.toContain('bulbasaur');
+  });
+
+  it('checkbox is checked when pokemon is in store', () => {
+    useStore.setState({ selectedPokemons: ['bulbasaur'] });
+    render(
+      <MemoryRouter>
+        <PokemonsList pokemonsList={singlePokemon} />
+      </MemoryRouter>
+    );
+    expect(screen.getByRole('checkbox')).toBeChecked();
+  });
+
+  it('checkbox is unchecked when pokemon is not in store', () => {
+    render(
+      <MemoryRouter>
+        <PokemonsList pokemonsList={singlePokemon} />
+      </MemoryRouter>
+    );
+    expect(screen.getByRole('checkbox')).not.toBeChecked();
   });
 });

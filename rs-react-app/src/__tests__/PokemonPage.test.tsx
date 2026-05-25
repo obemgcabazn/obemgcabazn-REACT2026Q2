@@ -69,4 +69,68 @@ describe('PokemonPage', () => {
       expect(screen.getByText(/pikachu/i)).toBeInTheDocument();
     });
   });
+
+  it('shows error message when fetchAllPokemons network request fails', async () => {
+    (globalThis.fetch as ReturnType<typeof vi.fn>).mockRejectedValueOnce(
+      new Error('Network error')
+    );
+
+    render(
+      <MemoryRouter>
+        <PokemonPage />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Network error')).toBeInTheDocument();
+    });
+  });
+
+  it('shows generic error message when fetchAllPokemons catch receives non-Error value', async () => {
+    (globalThis.fetch as ReturnType<typeof vi.fn>).mockRejectedValueOnce(
+      'plain string error'
+    );
+
+    render(
+      <MemoryRouter>
+        <PokemonPage />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Error while loading data')).toBeInTheDocument();
+    });
+  });
+
+  it('shows "Pokemon not found" when fetchPokemonByName returns 404', async () => {
+    localStorage.setItem('searchQuery', JSON.stringify('unknownmon'));
+    mockFetch({}, false);
+
+    render(
+      <MemoryRouter>
+        <PokemonPage />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Pokemon not found')).toBeInTheDocument();
+    });
+  });
+
+  it('shows error message when fetchPokemonByName network request fails', async () => {
+    localStorage.setItem('searchQuery', JSON.stringify('pikachu'));
+    (globalThis.fetch as ReturnType<typeof vi.fn>).mockRejectedValueOnce(
+      new Error('fetch failed')
+    );
+
+    render(
+      <MemoryRouter>
+        <PokemonPage />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('fetch failed')).toBeInTheDocument();
+    });
+  });
 });
