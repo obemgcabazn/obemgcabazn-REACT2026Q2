@@ -5,18 +5,23 @@ import App from './App.tsx';
 import ErrorBoundary from './components/ErrorBoundary.tsx';
 import { BrowserRouter } from 'react-router';
 import { ThemeProvider } from './context/ThemeContext.tsx';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
 
 const rootElement = document.getElementById('root');
 if (rootElement !== null) {
   createRoot(rootElement).render(
     <StrictMode>
-      <BrowserRouter>
-        <ErrorBoundary>
-          <ThemeProvider>
-            <App />
-          </ThemeProvider>
-        </ErrorBoundary>
-      </BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <ErrorBoundary>
+            <ThemeProvider>
+              <App />
+            </ThemeProvider>
+          </ErrorBoundary>
+        </BrowserRouter>
+      </QueryClientProvider>
     </StrictMode>
   );
 }

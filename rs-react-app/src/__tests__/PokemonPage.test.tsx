@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import PokemonPage from '../components/PokemonPage';
 
@@ -33,6 +34,20 @@ const mockFetch = (data: unknown, ok = true) => {
   });
 };
 
+const renderWithProviders = (ui: React.ReactElement) => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false },
+    },
+  });
+
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <MemoryRouter>{ui}</MemoryRouter>
+    </QueryClientProvider>
+  );
+};
+
 describe('PokemonPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -42,11 +57,7 @@ describe('PokemonPage', () => {
   it('shows spinner then renders pokemon list', async () => {
     mockFetch({ results: [{ name: 'bulbasaur', url: '...' }] });
 
-    render(
-      <MemoryRouter>
-        <PokemonPage />
-      </MemoryRouter>
-    );
+    renderWithProviders(<PokemonPage />);
 
     expect(screen.getByText('Loading...')).toBeInTheDocument();
 
@@ -59,11 +70,7 @@ describe('PokemonPage', () => {
     localStorage.setItem('searchQuery', JSON.stringify('pikachu'));
     mockFetch({ id: 25, name: 'pikachu', types: [], sprites: {} });
 
-    render(
-      <MemoryRouter>
-        <PokemonPage />
-      </MemoryRouter>
-    );
+    renderWithProviders(<PokemonPage />);
 
     await waitFor(() => {
       expect(screen.getByText(/pikachu/i)).toBeInTheDocument();
@@ -75,11 +82,7 @@ describe('PokemonPage', () => {
       new Error('Network error')
     );
 
-    render(
-      <MemoryRouter>
-        <PokemonPage />
-      </MemoryRouter>
-    );
+    renderWithProviders(<PokemonPage />);
 
     await waitFor(() => {
       expect(screen.getByText('Network error')).toBeInTheDocument();
@@ -91,11 +94,7 @@ describe('PokemonPage', () => {
       'plain string error'
     );
 
-    render(
-      <MemoryRouter>
-        <PokemonPage />
-      </MemoryRouter>
-    );
+    renderWithProviders(<PokemonPage />);
 
     await waitFor(() => {
       expect(screen.getByText('Error while loading data')).toBeInTheDocument();
@@ -106,11 +105,7 @@ describe('PokemonPage', () => {
     localStorage.setItem('searchQuery', JSON.stringify('unknownmon'));
     mockFetch({}, false);
 
-    render(
-      <MemoryRouter>
-        <PokemonPage />
-      </MemoryRouter>
-    );
+    renderWithProviders(<PokemonPage />);
 
     await waitFor(() => {
       expect(screen.getByText('Pokemon not found')).toBeInTheDocument();
@@ -123,11 +118,7 @@ describe('PokemonPage', () => {
       new Error('fetch failed')
     );
 
-    render(
-      <MemoryRouter>
-        <PokemonPage />
-      </MemoryRouter>
-    );
+    renderWithProviders(<PokemonPage />);
 
     await waitFor(() => {
       expect(screen.getByText('fetch failed')).toBeInTheDocument();
