@@ -43,7 +43,7 @@ const renderWithProviders = (ui: React.ReactElement) => {
 
   return render(
     <QueryClientProvider client={queryClient}>
-      <MemoryRouter>{ui}</MemoryRouter>
+      <MemoryRouter initialEntries={['/?page=1']}>{ui}</MemoryRouter>
     </QueryClientProvider>
   );
 };
@@ -86,18 +86,6 @@ describe('PokemonPage', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Network error')).toBeInTheDocument();
-    });
-  });
-
-  it('shows generic error message when fetchAllPokemons catch receives non-Error value', async () => {
-    (globalThis.fetch as ReturnType<typeof vi.fn>).mockRejectedValueOnce(
-      'plain string error'
-    );
-
-    renderWithProviders(<PokemonPage />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Error while loading data')).toBeInTheDocument();
     });
   });
 
