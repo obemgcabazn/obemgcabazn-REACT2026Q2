@@ -5,32 +5,8 @@ import Spinner from './Spinner.tsx';
 import ErrorHandler from './ErrorHandler.tsx';
 import { Outlet, useSearchParams } from 'react-router';
 import OnePokemon from './OnePokemon.tsx';
-import { useQuery } from '@tanstack/react-query';
-import type { Pokemon } from 'pokeapi-typescript';
-
-interface PokemonInList {
-  name: string;
-  url: string;
-}
-
-const PAGE_SIZE = 10;
-const fetchList = async (
-  offset: number,
-  name?: string
-): Promise<Pokemon | PokemonInList[]> => {
-  if (name) {
-    const resp = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}/`);
-    if (!resp.ok) {
-      throw new Error(String(resp.status));
-    }
-    return resp.json() as Promise<Pokemon>;
-  }
-  const resp = await fetch(
-    `https://pokeapi.co/api/v2/pokemon/?limit=${PAGE_SIZE}&offset=${offset}`
-  );
-  const results: { results: PokemonInList[] } = await resp.json();
-  return results.results;
-};
+import { usePokemonList } from '../hooks/usePokemonList.tsx';
+import { usePokemonByName } from '../hooks/usePokemonByName.tsx';
 
 const PokemonPage = () => {
   const [searchQuery, setSearchQuery] = useLocalStorage<string>(
@@ -44,26 +20,36 @@ const PokemonPage = () => {
     setSearchParams({ page: '1' });
   }
   const pokemonId = searchParams.get('pokemonId');
+  const {
+    data: list,
+    isLoading: listLoading,
+    isError: listError,
+    error: listErr,
+  } = usePokemonList(page, !searchQuery);
+  const {
+    data: pokemon,
+    isLoading: searchLoading,
+    isError: searchError,
+    error: searchErr,
+  } = usePokemonByName(searchQuery);
 
-  const { isLoading, isError, error, data } = useQuery({
-    queryKey: ['list', page, searchQuery],
-    queryFn: () => fetchList(Number(page), searchQuery),
-    retry: false,
-  });
+  const isLoading = searchQuery ? searchLoading : listLoading;
+  const isError = searchQuery ? searchError : listError;
+  const error = searchQuery ? searchErr : listErr;
 
   const bottomSection = () => {
     if (isLoading) return <Spinner />;
     if (isError) return <ErrorHandler errorData={error} />;
-    if (Array.isArray(data)) {
+    if (searchQuery && pokemon) {
+      return <OnePokemon pokemon={pokemon} />;
+    }
+    if (list) {
       return (
         <div className="pokemon-list__wrapper">
-          <PokemonsList pokemonsList={data} />
+          <PokemonsList pokemonsList={list} />
           {pokemonId && <Outlet />}
         </div>
       );
-    }
-    if (searchQuery && data && !Array.isArray(data)) {
-      return <OnePokemon pokemon={data} />;
     }
   };
   const handleSearch = (query: string) => {
