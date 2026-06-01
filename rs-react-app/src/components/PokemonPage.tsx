@@ -20,12 +20,14 @@ const PokemonPage = () => {
     setSearchParams({ page: '1' });
   }
   const pokemonId = searchParams.get('pokemonId');
+
   const {
     data: list,
     isLoading: listLoading,
     isError: listError,
     error: listErr,
   } = usePokemonList(page, !searchQuery);
+
   const {
     data: pokemon,
     isLoading: searchLoading,
