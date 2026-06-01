@@ -39,7 +39,7 @@ const PokemonPage = () => {
 
   const bottomSection = () => {
     if (isLoading) return <Spinner />;
-    if (isError) return <ErrorHandler errorData={error} />;
+    if (isError && error) return <ErrorHandler errorData={error} />;
     if (searchQuery && pokemon) {
       return <OnePokemon pokemon={pokemon} />;
     }
