@@ -1,3 +1,7 @@
+interface ImportMetaEnv {
+  readonly VITE_CACHE_TTL: string;
+}
+
 declare module '*.css' {
   const content: { [className: string]: string };
   export default content;
