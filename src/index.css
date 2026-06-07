@@ -1,0 +1,139 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: sans-serif;
+  background: #f0f2f5;
+  color: #1a1a1a;
+  display: flex;
+  gap: 12px;
+  padding: 24px;
+}
+
+/* App buttons */
+button {
+  cursor: pointer;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #3b82f6;
+  color: #fff;
+  font-size: 14px;
+  transition: background 0.15s;
+}
+
+button:hover {
+  background: #2563eb;
+}
+
+/* Modal */
+.modal-overflow {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal-dialog {
+  background: #fff;
+  border-radius: 10px;
+  padding: 28px 32px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.modal-dialog > button {
+  align-self: flex-end;
+  background: transparent;
+  color: #6b7280;
+  font-size: 13px;
+  padding: 4px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+}
+
+.modal-dialog > button:hover {
+  background: #f3f4f6;
+  color: #111;
+}
+
+/* Forms */
+h2 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+}
+
+input[type='text'],
+input[type='number'],
+input[type='email'] {
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+input[type='text']:focus,
+input[type='number']:focus,
+input[type='email']:focus {
+  border-color: #3b82f6;
+}
+
+/* Checkbox row */
+label:has(input[type='checkbox']) {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  font-weight: 400;
+  color: #4b5563;
+}
+
+input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  accent-color: #3b82f6;
+  cursor: pointer;
+}
+
+/* Submit button */
+button[type='submit'] {
+  margin-top: 4px;
+  width: 100%;
+  padding: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  background: #3b82f6;
+  border-radius: 6px;
+}
+
+button[type='submit']:hover {
+  background: #2563eb;
+}
