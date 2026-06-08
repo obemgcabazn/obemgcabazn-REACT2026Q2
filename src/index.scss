@@ -15,7 +15,6 @@ body {
   padding: 24px;
 }
 
-/* App buttons */
 button {
   cursor: pointer;
   padding: 8px 16px;
@@ -31,7 +30,6 @@ button:hover {
   background: #2563eb;
 }
 
-/* Modal */
 .modal-overflow {
   position: fixed;
   inset: 0;
@@ -69,7 +67,6 @@ button:hover {
   color: #111;
 }
 
-/* Forms */
 h2 {
   font-size: 18px;
   font-weight: 600;
@@ -90,24 +87,18 @@ label {
   color: #374151;
 }
 
-input[type='text'],
-input[type='number'],
-input[type='email'] {
+input {
   padding: 8px 10px;
   border: 1px solid #d1d5db;
   border-radius: 6px;
   font-size: 14px;
   outline: none;
-  transition: border-color 0.15s;
+
+  &:focus {
+    border-color: #3b82f6;
+  }
 }
 
-input[type='text']:focus,
-input[type='number']:focus,
-input[type='email']:focus {
-  border-color: #3b82f6;
-}
-
-/* Checkbox row */
 label:has(input[type='checkbox']) {
   flex-direction: row;
   align-items: center;
@@ -123,7 +114,60 @@ input[type='checkbox'] {
   cursor: pointer;
 }
 
-/* Submit button */
+input[type='number'] {
+  -webkit-appearance: textfield;
+  -moz-appearance: textfield;
+  appearance: textfield;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+fieldset {
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+legend {
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+  padding: 0 4px;
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+
+  label {
+    font-weight: 400;
+    color: #4b5563;
+  }
+}
+
+input[type='radio'] {
+  width: 16px;
+  height: 16px;
+  accent-color: #3b82f6;
+  cursor: pointer;
+}
+
+[class^='validate-'] {
+  font-size: 11px;
+  font-weight: 400;
+  color: #ef4444;
+  min-height: 16px;
+}
+
 button[type='submit'] {
   margin-top: 4px;
   width: 100%;
@@ -132,8 +176,23 @@ button[type='submit'] {
   font-weight: 600;
   background: #3b82f6;
   border-radius: 6px;
-}
 
-button[type='submit']:hover {
-  background: #2563eb;
+  &:hover {
+    background: #2563eb;
+  }
+
+  &:disabled {
+    background: #93c5fd;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: not-allowed;
+  }
+}
+.password-strength {
+  list-style: none;
+  .invalid {
+    color: #ef4444;
+  }
+  .valid {
+    display: none;
+  }
 }

@@ -35,15 +35,32 @@ function App() {
       )}
 
       <div className="results-output">
-        {formsResults.map((i) => (
-          <>
-            <div>{i.name}</div>
-            <div>{i.age}</div>
-            <div>{i.email}</div>
-          </>
-        ))}
-        {/*<div className="uncontrolled-form-results"></div>*/}
-        {/*<div className="rhf-form-results"></div>*/}
+        <ul className="uncontrolled-form-results">
+          {formsResults
+            .filter((i) => i.source === 'uncontrolled')
+            .map((item, index) => (
+              <li key={index}>
+                <div>{item.name}</div>
+                <div>{item.age}</div>
+                <div>{item.email}</div>
+                {item.image && <img src={item.image} alt="" />}
+                <div>{item.password}</div>
+              </li>
+            ))}
+        </ul>
+        <div className="rhf-form-results">
+          {formsResults
+            .filter((i) => i.source === 'rhf')
+            .map((item, index) => (
+              <li key={index}>
+                <div>{item.name}</div>
+                <div>{item.age}</div>
+                <div>{item.email}</div>
+                {item.image && <img src={item.image} alt="" />}
+                <div>{item.password}</div>
+              </li>
+            ))}
+        </div>
       </div>
     </>
   );
