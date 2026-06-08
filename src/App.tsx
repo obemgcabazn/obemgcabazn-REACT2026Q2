@@ -49,7 +49,7 @@ function App() {
       )}
       {openRHF && (
         <Modal onClose={() => setOpenRHF(false)}>
-          <ReactHookForm />
+          <ReactHookForm onClose={() => setOpenRHF(false)} />
         </Modal>
       )}
       <div className="results-output">
