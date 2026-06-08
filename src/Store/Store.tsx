@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-type FormResult = {
+export type FormResult = {
   source: 'uncontrolled' | 'rhf';
   name: string;
   age: number;

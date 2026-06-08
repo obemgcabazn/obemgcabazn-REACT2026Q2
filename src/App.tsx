@@ -1,6 +1,7 @@
 import Modal from './components/Modal';
 import UncontrolledForm from './components/UncontrolledForm';
 import ReactHookForm from './components/ReactHookForm';
+import ResultCard from './components/ResultCard';
 import { useState } from 'react';
 import { useFormResults } from './Store/Store.tsx';
 
@@ -50,33 +51,11 @@ function App() {
           <h2>Uncontrolled Form</h2>
           <ul className="form-results">
             {ucResults.map(({ item, globalIndex }, localIndex) => (
-              <li
+              <ResultCard
                 key={localIndex}
-                className={`result-card${globalIndex === newItemGlobalIndex ? ' result-new' : ''}`}
-              >
-                <div>
-                  <strong>Name:</strong> {item.name}
-                </div>
-                <div>
-                  <strong>Age:</strong> {item.age}
-                </div>
-                <div>
-                  <strong>Email:</strong> {item.email}
-                </div>
-                <div>
-                  <strong>Country:</strong> {item.country}
-                </div>
-                {item.gender && (
-                  <div>
-                    <strong>Gender:</strong> {item.gender}
-                  </div>
-                )}
-                <div>
-                  <strong>Privacy:</strong>{' '}
-                  {item.privacy ? 'Agreed' : 'Not agreed'}
-                </div>
-                {item.image && <img src={item.image} alt="uploaded" />}
-              </li>
+                item={item}
+                isNew={globalIndex === newItemGlobalIndex}
+              />
             ))}
           </ul>
         </section>
@@ -84,33 +63,11 @@ function App() {
           <h2>React Hook Form</h2>
           <ul className="form-results">
             {rhfResults.map(({ item, globalIndex }, localIndex) => (
-              <li
+              <ResultCard
                 key={localIndex}
-                className={`result-card${globalIndex === newItemGlobalIndex ? ' result-new' : ''}`}
-              >
-                <div>
-                  <strong>Name:</strong> {item.name}
-                </div>
-                <div>
-                  <strong>Age:</strong> {item.age}
-                </div>
-                <div>
-                  <strong>Email:</strong> {item.email}
-                </div>
-                <div>
-                  <strong>Country:</strong> {item.country}
-                </div>
-                {item.gender && (
-                  <div>
-                    <strong>Gender:</strong> {item.gender}
-                  </div>
-                )}
-                <div>
-                  <strong>Privacy:</strong>{' '}
-                  {item.privacy ? 'Agreed' : 'Not agreed'}
-                </div>
-                {item.image && <img src={item.image} alt="uploaded" />}
-              </li>
+                item={item}
+                isNew={globalIndex === newItemGlobalIndex}
+              />
             ))}
           </ul>
         </section>
