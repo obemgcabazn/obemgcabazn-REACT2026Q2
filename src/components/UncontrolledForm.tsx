@@ -1,23 +1,28 @@
+import React, { useState } from 'react';
 import { useFormResults } from '../Store/Store.tsx';
 import { readFileAsBase64 } from '../utilities/readFileAsBase64.ts';
 import { z } from 'zod';
-import { useState } from 'react';
 
 const formSchema = z
   .object({
-    name: z.string().refine((val) => val === '' || /^[A-ZА-Я]/.test(val), {
-      message: 'First letter must be uppercase',
-    }),
+    name: z
+      .string()
+      .min(1, 'Name is required')
+      .refine((val) => /^[A-ZА-Я]/.test(val), {
+        message: 'First letter must be uppercase',
+      }),
     age: z
       .string()
-      .refine((val) => val === '' || !isNaN(Number(val)), {
+      .min(1, 'Age is required')
+      .refine((val) => !isNaN(Number(val)), {
         message: 'Age must be a number',
       })
-      .refine((val) => val === '' || Number(val) > 0, {
+      .refine((val) => Number(val) > 0, {
         message: 'Age must be a positive number',
       }),
     email: z
       .string()
+      .min(1, 'Email is required')
       .refine((val) => val.includes('@'), {
         message: 'Email must contain @',
       })
@@ -32,12 +37,11 @@ const formSchema = z
           const domain = val.split('@')[1];
           return domain && domain.includes('.');
         },
-        {
-          message: 'Domain must contain at least one dot',
-        }
+        { message: 'Domain must contain at least one dot' }
       ),
     password: z
       .string()
+      .min(1, 'Password is required')
       .refine((val) => /[0-9]/.test(val), {
         message: 'Password must contain at least 1 number',
       })
@@ -53,221 +57,197 @@ const formSchema = z
     passwordConfirm: z.string(),
   })
   .refine((data) => data.password === data.passwordConfirm, {
-    message: 'Password must match',
+    message: 'Passwords must match',
     path: ['passwordConfirm'],
   });
 
+type FieldErrors = Partial<
+  Record<
+    | 'name'
+    | 'age'
+    | 'email'
+    | 'password'
+    | 'passwordConfirm'
+    | 'country'
+    | 'image'
+    | 'privacy',
+    string
+  >
+>;
+
 const UncontrolledForm = ({ onClose }: { onClose: () => void }) => {
   const { addResult, countries } = useFormResults();
-  const [nameError, setNameError] = useState<string | null>(null);
-  const [nameTouched, setNameTouched] = useState(false);
-  const [ageError, setAgeError] = useState<string | null>(null);
-  const [ageTouched, setAgeTouched] = useState(false);
-  const [emailError, setEmailError] = useState<string | null>(null);
-  const [emailTouched, setEmailTouched] = useState(false);
-  const [password, setPassword] = useState<string>('');
+  const [errors, setErrors] = useState<FieldErrors>({});
   const [passwordStrength, setPasswordStrength] = useState({
     hasNumber: false,
     hasUppercase: false,
     hasLowercase: false,
     hasSpecial: false,
   });
-  const [passwordError, setPasswordError] = useState<string | null>(null);
-  const [countryError, setCountryError] = useState<string | null>(null);
-  const [countryTouched, setCountryTouched] = useState(false);
-  const [imageError, setImageError] = useState<string | null>(null);
 
-  const handleNameInput = (event: React.SyntheticEvent<HTMLInputElement>) => {
-    const nameValue = event.currentTarget.value;
-    setNameTouched(true);
-
-    if (!nameValue) {
-      setNameError(null);
-      return;
-    }
-
-    const result = formSchema.shape.name.safeParse(nameValue);
-    const error = !result.success ? result.error.issues[0].message : null;
-    setNameError(error);
-  };
-
-  const handleAgeInput = (event: React.SyntheticEvent<HTMLInputElement>) => {
-    const ageValue = event.currentTarget.value;
-    setAgeTouched(true);
-
-    const result = formSchema.shape.age.safeParse(ageValue);
-    const error = !result.success ? result.error.issues[0].message : null;
-    setAgeError(error);
-  };
-
-  const handleEmailInput = (event: React.SyntheticEvent<HTMLInputElement>) => {
-    const emailValue = event.currentTarget.value;
-    setEmailTouched(true);
-    const result = formSchema.shape.email.safeParse(emailValue);
-    const error = !result.success ? result.error.issues[0].message : null;
-    setEmailError(error);
-  };
-
-  const handlePasswordInput = (
-    event: React.SyntheticEvent<HTMLInputElement>
-  ) => {
-    const passwordValue = event.currentTarget.value;
-    formSchema.shape.password.safeParse(passwordValue);
-    setPassword(passwordValue);
+  const handlePasswordInput = (event: React.SyntheticEvent<HTMLInputElement>) => {
+    const val = event.currentTarget.value;
     setPasswordStrength({
-      hasNumber: /[0-9]/.test(passwordValue),
-      hasUppercase: /[A-ZА-Я]/.test(passwordValue),
-      hasLowercase: /[a-zа-я]/.test(passwordValue),
-      hasSpecial: /[^a-zA-Zа-яА-Я0-9]/.test(passwordValue),
+      hasNumber: /[0-9]/.test(val),
+      hasUppercase: /[A-ZА-Я]/.test(val),
+      hasLowercase: /[a-zа-я]/.test(val),
+      hasSpecial: /[^a-zA-Zа-яА-Я0-9]/.test(val),
     });
-  };
-
-  const handleCountryInput = (event: React.SyntheticEvent<HTMLInputElement>) => {
-    const value = event.currentTarget.value;
-    setCountryTouched(true);
-    setCountryError(value && !countries.includes(value) ? 'Select a country from the list' : null);
-  };
-
-  const handlePasswordConfirmInput = (
-    event: React.SyntheticEvent<HTMLInputElement>
-  ) => {
-    const passwordConfirmValue = event.currentTarget.value;
-    const error =
-      password !== passwordConfirmValue ? 'Passwords must match' : null;
-    setPasswordError(error);
   };
 
   const handleSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.currentTarget;
-    const elements = form.elements;
+    const els = form.elements;
 
-    const imageInput = elements.namedItem('image') as HTMLInputElement;
-    const file = imageInput.files?.[0];
+    const nameVal = (els.namedItem('name') as HTMLInputElement).value;
+    const ageVal = (els.namedItem('age') as HTMLInputElement).value;
+    const emailVal = (els.namedItem('email') as HTMLInputElement).value;
+    const countryVal = (els.namedItem('country') as HTMLInputElement).value;
+    const passwordVal = (els.namedItem('password') as HTMLInputElement).value;
+    const passwordConfirmVal = (els.namedItem('passwordConfirm') as HTMLInputElement).value;
+    const file = (els.namedItem('image') as HTMLInputElement).files?.[0];
+    const genderVal = (els.namedItem('gender') as RadioNodeList)?.value || undefined;
+    const privacyVal = (els.namedItem('privacy') as HTMLInputElement).checked;
+
+    const newErrors: FieldErrors = {};
+
+    const result = formSchema.safeParse({
+      name: nameVal,
+      age: ageVal,
+      email: emailVal,
+      password: passwordVal,
+      passwordConfirm: passwordConfirmVal,
+    });
+    if (!result.success) {
+      for (const issue of result.error.issues) {
+        const field = issue.path[0] as keyof FieldErrors;
+        if (!newErrors[field]) newErrors[field] = issue.message;
+      }
+    }
+
+    if (!countryVal) {
+      newErrors.country = 'Country is required';
+    } else if (!countries.includes(countryVal)) {
+      newErrors.country = 'Select a country from the list';
+    }
 
     if (file) {
       if (!['image/png', 'image/jpeg'].includes(file.type)) {
-        setImageError('Only PNG and JPEG images are allowed');
-        return;
-      }
-      if (file.size > 5 * 1024 * 1024) {
-        setImageError('Image must be smaller than 5 MB');
-        return;
+        newErrors.image = 'Only PNG and JPEG images are allowed';
+      } else if (file.size > 5 * 1024 * 1024) {
+        newErrors.image = 'Image must be smaller than 5 MB';
       }
     }
-    setImageError(null);
+
+    if (!privacyVal) {
+      newErrors.privacy = 'You must agree to Terms & Conditions';
+    }
+
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) return;
 
     const submit = async () => {
       const imageBase64 = file ? await readFileAsBase64(file) : '';
       addResult({
         source: 'uncontrolled',
-        name: (elements.namedItem('name') as HTMLInputElement).value,
-        email: (elements.namedItem('email') as HTMLInputElement).value,
-        age: Number((elements.namedItem('age') as HTMLInputElement).value),
+        name: nameVal,
+        email: emailVal,
+        age: Number(ageVal),
+        gender: genderVal,
         image: imageBase64,
-        password: (elements.namedItem('password') as HTMLInputElement).value,
-        privacy: (elements.namedItem('privacy') as HTMLInputElement).checked,
-        country: (elements.namedItem('country') as HTMLInputElement).value,
+        password: passwordVal,
+        privacy: privacyVal,
+        country: countryVal,
       });
       form.reset();
+      setPasswordStrength({
+        hasNumber: false,
+        hasUppercase: false,
+        hasLowercase: false,
+        hasSpecial: false,
+      });
+      setErrors({});
       onClose();
     };
     submit();
   };
 
-  const isPasswordStrong =
-    passwordStrength.hasNumber &&
-    passwordStrength.hasUppercase &&
-    passwordStrength.hasLowercase &&
-    passwordStrength.hasSpecial;
-
-  const isFormValid =
-    nameTouched &&
-    ageTouched &&
-    emailTouched &&
-    countryTouched &&
-    isPasswordStrong &&
-    !nameError &&
-    !ageError &&
-    !emailError &&
-    !passwordError &&
-    !countryError;
-
   return (
     <>
       <h2>Uncontrolled Modal</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} noValidate>
         <label htmlFor="name">
           Name
           <input
-            onInput={handleNameInput}
             id="name"
+            name="name"
             type="text"
             placeholder="name"
-            required
             autoFocus
           />
-          <p className="validate-name-field">{nameError}</p>
+          <p className="validate-name-field">{errors.name}</p>
         </label>
         <label htmlFor="age">
           How old are you?
-          <input
-            onInput={handleAgeInput}
-            id="age"
-            type="number"
-            placeholder="age"
-            required
-          />
-          <p className="validate-age-field">{ageError}</p>
+          <input id="age" name="age" type="number" placeholder="age" />
+          <p className="validate-age-field">{errors.age}</p>
         </label>
         <label htmlFor="email">
           Email
           <input
-            onInput={handleEmailInput}
             id="email"
+            name="email"
             type="email"
             placeholder="name@mail.com"
-            required
           />
-          <p className="validate-email-field">{emailError}</p>
+          <p className="validate-email-field">{errors.email}</p>
         </label>
         <label htmlFor="country">
           Country
           <input
-            onInput={handleCountryInput}
             id="country"
             name="country"
             type="text"
             list="countries-list"
             placeholder="Start typing..."
-            required
           />
           <datalist id="countries-list">
             {countries.map((c) => (
               <option key={c} value={c} />
             ))}
           </datalist>
-          <p className="validate-country-field">{countryError}</p>
+          <p className="validate-country-field">{errors.country}</p>
         </label>
         <fieldset>
           <legend>Select your gender:</legend>
           <div className="radio-group">
-            <input type="radio" id="female" name="gender" />
+            <input type="radio" id="female" name="gender" value="female" />
             <label htmlFor="female">Female</label>
           </div>
           <div className="radio-group">
-            <input type="radio" id="male" name="gender" />
+            <input type="radio" id="male" name="gender" value="male" />
             <label htmlFor="male">Male</label>
           </div>
         </fieldset>
         <label htmlFor="image">
           Upload file
-          <input id="image" name="image" type="file" accept="image/png, image/jpeg" />
-          <p className="validate-image-field">{imageError}</p>
+          <input
+            id="image"
+            name="image"
+            type="file"
+            accept="image/png, image/jpeg"
+          />
+          <p className="validate-image-field">{errors.image}</p>
         </label>
         <label htmlFor="password">
           Password
-          <input onInput={handlePasswordInput} id="password" type="password" />
+          <input
+            onInput={handlePasswordInput}
+            id="password"
+            name="password"
+            type="password"
+          />
           <ul className="password-strength">
             <li className={passwordStrength.hasNumber ? 'valid' : 'invalid'}>
               At least 1 number
@@ -282,23 +262,23 @@ const UncontrolledForm = ({ onClose }: { onClose: () => void }) => {
               At least 1 special character
             </li>
           </ul>
+          <p className="validate-password-field">{errors.password}</p>
         </label>
         <label htmlFor="confirm-password">
           Confirm Password
           <input
-            onInput={handlePasswordConfirmInput}
             id="confirm-password"
+            name="passwordConfirm"
             type="password"
           />
-          <p className="validate-password-field">{passwordError}</p>
+          <p className="validate-password-field">{errors.passwordConfirm}</p>
         </label>
         <label htmlFor="privacy">
-          <input id="privacy" type="checkbox" required />I agree with Terms &
-          Conditions
+          <input id="privacy" name="privacy" type="checkbox" />I agree with
+          Terms & Conditions
         </label>
-        <button type="submit" disabled={!isFormValid}>
-          Submit
-        </button>
+        <p className="validate-privacy-field">{errors.privacy}</p>
+        <button type="submit">Submit</button>
       </form>
     </>
   );
