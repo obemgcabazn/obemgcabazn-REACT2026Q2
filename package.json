@@ -9,10 +9,13 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "preview": "vite preview",
-    "format:fix": "prettier --write ."
+    "format:fix": "prettier --write .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage"
   },
   "lint-staged": {
-    "*.{ts,tsx,js,jsx}": [
+    "{**/*.{ts,tsx,js,jsx},!**/*.test.{ts,tsx,js,jsx},!**/__tests__/**/*.{ts,tsx,js,jsx}}": [
       "eslint --fix"
     ],
     "*.{ts,tsx,js,jsx,json,css,md}": [
