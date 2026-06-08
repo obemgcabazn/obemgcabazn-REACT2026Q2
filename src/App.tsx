@@ -1,13 +1,22 @@
 import Modal from './components/Modal';
 import UncontrolledForm from './components/UncontrolledForm';
 import ReactHookForm from './components/ReactHookForm';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useFormResults } from './Store/Store.tsx';
 
 function App() {
   const [open, setOpen] = useState(false);
   const [openRHF, setOpenRHF] = useState(false);
   const { formsResults } = useFormResults();
+  const [newItemGlobalIndex, setNewItemGlobalIndex] = useState<number | null>(
+    null
+  );
+
+  useEffect(() => {
+    if (formsResults.length > 0) {
+      setNewItemGlobalIndex(formsResults.length - 1);
+    }
+  }, [formsResults.length]);
 
   const showUncontrolledModal = () => {
     setOpenRHF(false);
@@ -15,14 +24,24 @@ function App() {
   };
 
   const showRHFModal = () => {
-    setOpenRHF(true);
     setOpen(false);
+    setOpenRHF(true);
   };
 
+  const ucResults = formsResults
+    .map((item, globalIndex) => ({ item, globalIndex }))
+    .filter(({ item }) => item.source === 'uncontrolled');
+
+  const rhfResults = formsResults
+    .map((item, globalIndex) => ({ item, globalIndex }))
+    .filter(({ item }) => item.source === 'rhf');
+
   return (
-    <>
-      <button onClick={showUncontrolledModal}>Open uncontroled form</button>
-      <button onClick={showRHFModal}>Open React Hook form</button>
+    <div className="app">
+      <div className="app-actions">
+        <button onClick={showUncontrolledModal}>Open Uncontrolled form</button>
+        <button onClick={showRHFModal}>Open React Hook form</button>
+      </div>
       {open && (
         <Modal onClose={() => setOpen(false)}>
           <UncontrolledForm onClose={() => setOpen(false)} />
@@ -33,36 +52,77 @@ function App() {
           <ReactHookForm />
         </Modal>
       )}
-
       <div className="results-output">
-        <ul className="uncontrolled-form-results">
-          {formsResults
-            .filter((i) => i.source === 'uncontrolled')
-            .map((item, index) => (
-              <li key={index}>
-                <div>{item.name}</div>
-                <div>{item.age}</div>
-                <div>{item.email}</div>
-                {item.image && <img src={item.image} alt="" />}
-                <div>{item.password}</div>
+        <section>
+          <h2>Uncontrolled Form</h2>
+          <ul className="form-results">
+            {ucResults.map(({ item, globalIndex }, localIndex) => (
+              <li
+                key={localIndex}
+                className={`result-card${globalIndex === newItemGlobalIndex ? ' result-new' : ''}`}
+              >
+                <div>
+                  <strong>Name:</strong> {item.name}
+                </div>
+                <div>
+                  <strong>Age:</strong> {item.age}
+                </div>
+                <div>
+                  <strong>Email:</strong> {item.email}
+                </div>
+                <div>
+                  <strong>Country:</strong> {item.country}
+                </div>
+                {item.gender && (
+                  <div>
+                    <strong>Gender:</strong> {item.gender}
+                  </div>
+                )}
+                <div>
+                  <strong>Privacy:</strong>{' '}
+                  {item.privacy ? 'Agreed' : 'Not agreed'}
+                </div>
+                {item.image && <img src={item.image} alt="uploaded" />}
               </li>
             ))}
-        </ul>
-        <div className="rhf-form-results">
-          {formsResults
-            .filter((i) => i.source === 'rhf')
-            .map((item, index) => (
-              <li key={index}>
-                <div>{item.name}</div>
-                <div>{item.age}</div>
-                <div>{item.email}</div>
-                {item.image && <img src={item.image} alt="" />}
-                <div>{item.password}</div>
+          </ul>
+        </section>
+        <section>
+          <h2>React Hook Form</h2>
+          <ul className="form-results">
+            {rhfResults.map(({ item, globalIndex }, localIndex) => (
+              <li
+                key={localIndex}
+                className={`result-card${globalIndex === newItemGlobalIndex ? ' result-new' : ''}`}
+              >
+                <div>
+                  <strong>Name:</strong> {item.name}
+                </div>
+                <div>
+                  <strong>Age:</strong> {item.age}
+                </div>
+                <div>
+                  <strong>Email:</strong> {item.email}
+                </div>
+                <div>
+                  <strong>Country:</strong> {item.country}
+                </div>
+                {item.gender && (
+                  <div>
+                    <strong>Gender:</strong> {item.gender}
+                  </div>
+                )}
+                <div>
+                  <strong>Privacy:</strong>{' '}
+                  {item.privacy ? 'Agreed' : 'Not agreed'}
+                </div>
+                {item.image && <img src={item.image} alt="uploaded" />}
               </li>
             ))}
-        </div>
+          </ul>
+        </section>
       </div>
-    </>
+    </div>
   );
 }
 

@@ -75,6 +75,7 @@ const UncontrolledForm = ({ onClose }: { onClose: () => void }) => {
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [countryError, setCountryError] = useState<string | null>(null);
   const [countryTouched, setCountryTouched] = useState(false);
+  const [imageError, setImageError] = useState<string | null>(null);
 
   const handleNameInput = (event: React.SyntheticEvent<HTMLInputElement>) => {
     const nameValue = event.currentTarget.value;
@@ -138,10 +139,23 @@ const UncontrolledForm = ({ onClose }: { onClose: () => void }) => {
 
   const handleSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const elements = event.currentTarget.elements;
+    const form = event.currentTarget;
+    const elements = form.elements;
 
     const imageInput = elements.namedItem('image') as HTMLInputElement;
     const file = imageInput.files?.[0];
+
+    if (file) {
+      if (!['image/png', 'image/jpeg'].includes(file.type)) {
+        setImageError('Only PNG and JPEG images are allowed');
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        setImageError('Image must be smaller than 5 MB');
+        return;
+      }
+    }
+    setImageError(null);
 
     const submit = async () => {
       const imageBase64 = file ? await readFileAsBase64(file) : '';
@@ -155,6 +169,7 @@ const UncontrolledForm = ({ onClose }: { onClose: () => void }) => {
         privacy: (elements.namedItem('privacy') as HTMLInputElement).checked,
         country: (elements.namedItem('country') as HTMLInputElement).value,
       });
+      form.reset();
       onClose();
     };
     submit();
@@ -247,7 +262,8 @@ const UncontrolledForm = ({ onClose }: { onClose: () => void }) => {
         </fieldset>
         <label htmlFor="image">
           Upload file
-          <input id="image" type="file" accept="image/png, image/jpeg" />
+          <input id="image" name="image" type="file" accept="image/png, image/jpeg" />
+          <p className="validate-image-field">{imageError}</p>
         </label>
         <label htmlFor="password">
           Password

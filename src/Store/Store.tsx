@@ -9,6 +9,7 @@ type FormResult = {
   password: string;
   privacy: Boolean;
   country: string;
+  gender?: string;
 };
 
 type FormResultsStore = {
