@@ -1,22 +1,15 @@
 import Modal from './components/Modal';
 import UncontrolledForm from './components/UncontrolledForm';
 import ReactHookForm from './components/ReactHookForm';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useFormResults } from './Store/Store.tsx';
 
 function App() {
   const [open, setOpen] = useState(false);
   const [openRHF, setOpenRHF] = useState(false);
   const { formsResults } = useFormResults();
-  const [newItemGlobalIndex, setNewItemGlobalIndex] = useState<number | null>(
-    null
-  );
-
-  useEffect(() => {
-    if (formsResults.length > 0) {
-      setNewItemGlobalIndex(formsResults.length - 1);
-    }
-  }, [formsResults.length]);
+  const newItemGlobalIndex =
+    formsResults.length > 0 ? formsResults.length - 1 : null;
 
   const showUncontrolledModal = () => {
     setOpenRHF(false);
