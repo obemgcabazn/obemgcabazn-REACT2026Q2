@@ -85,7 +85,9 @@ const UncontrolledForm = ({ onClose }: { onClose: () => void }) => {
     hasSpecial: false,
   });
 
-  const handlePasswordInput = (event: React.SyntheticEvent<HTMLInputElement>) => {
+  const handlePasswordInput = (
+    event: React.SyntheticEvent<HTMLInputElement>
+  ) => {
     const val = event.currentTarget.value;
     setPasswordStrength({
       hasNumber: /[0-9]/.test(val),
@@ -105,9 +107,12 @@ const UncontrolledForm = ({ onClose }: { onClose: () => void }) => {
     const emailVal = (els.namedItem('email') as HTMLInputElement).value;
     const countryVal = (els.namedItem('country') as HTMLInputElement).value;
     const passwordVal = (els.namedItem('password') as HTMLInputElement).value;
-    const passwordConfirmVal = (els.namedItem('passwordConfirm') as HTMLInputElement).value;
+    const passwordConfirmVal = (
+      els.namedItem('passwordConfirm') as HTMLInputElement
+    ).value;
     const file = (els.namedItem('image') as HTMLInputElement).files?.[0];
-    const genderVal = (els.namedItem('gender') as RadioNodeList)?.value || undefined;
+    const genderVal =
+      (els.namedItem('gender') as RadioNodeList)?.value || undefined;
     const privacyVal = (els.namedItem('privacy') as HTMLInputElement).checked;
 
     const newErrors: FieldErrors = {};
@@ -266,11 +271,7 @@ const UncontrolledForm = ({ onClose }: { onClose: () => void }) => {
         </label>
         <label htmlFor="confirm-password">
           Confirm Password
-          <input
-            id="confirm-password"
-            name="passwordConfirm"
-            type="password"
-          />
+          <input id="confirm-password" name="passwordConfirm" type="password" />
           <p className="validate-password-field">{errors.passwordConfirm}</p>
         </label>
         <label htmlFor="privacy">

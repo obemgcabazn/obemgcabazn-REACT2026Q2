@@ -7,7 +7,7 @@ type FormResult = {
   email: string;
   image: string;
   password: string;
-  privacy: Boolean;
+  privacy: boolean;
   country: string;
   gender?: string;
 };
