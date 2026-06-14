@@ -2,30 +2,27 @@ import type { YearData } from '../../types';
 import { formatNumber } from '../../utils/format-utils';
 
 import styles from './data-table.module.css';
+import { memo } from 'react';
 
 type DataTableProps = {
-  data: YearData[];
+  data: YearData | undefined;
   year: number;
   columns: string[];
 };
 
-export const DataTable = ({ data, year, columns }: DataTableProps) => {
-  const yearData = data.filter((d) => d.year === year);
-
-  if (yearData.length === 0) {
+export const DataTable = memo(({ data, year, columns }: DataTableProps) => {
+  if (!data) {
     return <div className={styles.noData}>No data available for year {year}</div>;
   }
-
-  const record = yearData[0];
 
   return (
     <table className={styles.table}>
       <tbody>
-        {columns.map((column, index) => (
-          <tr key={index} className={styles.row}>
+        {columns.map((column) => (
+          <tr key={column} className={styles.row}>
             <td className={styles.labelCell}>{column.replace(/_/g, ' ').toUpperCase()}</td>
             <td className={styles.valueCell}>
-              {formatNumber(record[column as keyof YearData] as number | undefined, {
+              {formatNumber(data[column as keyof YearData] as number | undefined, {
                 maximumFractionDigits: 2,
               })}
             </td>
@@ -34,4 +31,4 @@ export const DataTable = ({ data, year, columns }: DataTableProps) => {
       </tbody>
     </table>
   );
-};
+});
