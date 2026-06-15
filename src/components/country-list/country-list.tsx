@@ -1,9 +1,46 @@
+import { List } from 'react-window';
+import { memo, useMemo, useRef, useState, useEffect } from 'react';
+import type { CSSProperties, ReactElement } from 'react';
 import type { Country, YearData } from '../../types';
 import { CountryCard } from '../country-card/country-card';
 import { createYearDataMap } from '../../utils/data-transformers';
 
 import styles from './country-list.module.css';
-import { memo, useMemo } from 'react';
+
+type RowProps = {
+  countries: Country[];
+  selectedYearMap: Map<string, YearData | undefined>;
+  selectedYear: number;
+  selectedColumns: string[];
+};
+
+type RowAllProps = {
+  ariaAttributes: { 'aria-posinset': number; 'aria-setsize': number; role: 'listitem' };
+  index: number;
+  style: CSSProperties;
+} & RowProps;
+
+function Row({
+  index,
+  style,
+  ariaAttributes,
+  countries,
+  selectedYearMap,
+  selectedYear,
+  selectedColumns,
+}: RowAllProps): ReactElement {
+  const country = countries[index];
+  return (
+    <div style={{ ...style, paddingBottom: 16 }} {...ariaAttributes}>
+      <CountryCard
+        country={country}
+        yearData={selectedYearMap.get(country.id)}
+        selectedYear={selectedYear}
+        selectedColumns={selectedColumns}
+      />
+    </div>
+  );
+}
 
 type CountryListProps = {
   countries: Country[];
@@ -63,17 +100,34 @@ export const CountryList = memo<CountryListProps>(
       [countries, searchQuery, selectedRegion, sortField, sortOrder, selectedYearMap]
     );
 
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [listHeight, setListHeight] = useState(600);
+
+    useEffect(() => {
+      if (containerRef.current) {
+        const { top } = containerRef.current.getBoundingClientRect();
+        setListHeight(window.innerHeight - top - 20);
+      }
+    }, []);
+
+    // All cards share the same height for a given selectedColumns state
+    const itemSize = useMemo(() => 140 + selectedColumns.length * 37, [selectedColumns.length]);
+
+    const rowProps = useMemo<RowProps>(
+      () => ({ countries: filteredCountries, selectedYearMap, selectedYear, selectedColumns }),
+      [filteredCountries, selectedYearMap, selectedYear, selectedColumns]
+    );
+
     return (
-      <div className={styles.countryList}>
-        {filteredCountries.map((country) => (
-          <CountryCard
-            key={country.id}
-            country={country}
-            yearData={selectedYearMap.get(country.id)}
-            selectedYear={selectedYear}
-            selectedColumns={selectedColumns}
-          />
-        ))}
+      <div ref={containerRef} className={styles.countryList} style={{ height: listHeight }}>
+        <List<RowProps>
+          rowComponent={Row}
+          rowProps={rowProps}
+          rowCount={filteredCountries.length}
+          rowHeight={itemSize}
+          overscanCount={3}
+          defaultHeight={600}
+        />
       </div>
     );
   }
