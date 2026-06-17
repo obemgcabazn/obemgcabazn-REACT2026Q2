@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import App from '../App';
 
@@ -39,14 +40,23 @@ describe('App', () => {
     localStorage.clear();
   });
 
+  const renderApp = () => {
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
+    return render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter initialEntries={['/?page=1']}>
+          <App />
+        </MemoryRouter>
+      </QueryClientProvider>
+    );
+  };
+
   it('Load ', async () => {
     mockFetch({ results: [{ name: 'bulbasaur', url: '...' }] });
 
-    render(
-      <MemoryRouter>
-        <App />
-      </MemoryRouter>
-    );
+    renderApp();
 
     expect(screen.getByText('Loading...')).toBeInTheDocument();
 
@@ -59,11 +69,7 @@ describe('App', () => {
     localStorage.setItem('searchQuery', JSON.stringify('pikachu'));
     mockFetch({ id: 25, name: 'pikachu', types: [], sprites: {} });
 
-    render(
-      <MemoryRouter>
-        <App />
-      </MemoryRouter>
-    );
+    renderApp();
 
     await waitFor(() => {
       expect(screen.getByText(/pikachu/i)).toBeInTheDocument();
