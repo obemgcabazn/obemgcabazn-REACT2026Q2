@@ -26,6 +26,10 @@
     /* Testing */
     "types": ["@testing-library/jest-dom", "vitest/globals", "vite/client"]
   },
-  "include": ["src"],
-  "exclude": ["src/**/*.test.ts", "src/**/*.test.tsx", "src/**/__tests__/**"]
+  "include": ["src", "./dist/types/**/*.ts", "./next-env.d.ts"],
+  "exclude": [
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx",
+    "src/**/__tests__/**, ../node_modules/*"
+  ]
 }

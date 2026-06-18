@@ -1,12 +1,10 @@
 {
   "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ],
+  "references": [{ "path": "./tsconfig.app.json" }],
   "compilerOptions": {
     "jsx": "react-jsx",
     "typeRoots": ["./node_modules/@types", "./declarations"],
-    "types": ["@testing-library/jest-dom"]
+    "types": ["@testing-library/jest-dom"],
+    "plugins": [{ "name": "next" }]
   }
 }
