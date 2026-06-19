@@ -4,7 +4,6 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "typeRoots": ["./node_modules/@types", "./declarations"],
-    "types": ["@testing-library/jest-dom"],
-    "plugins": [{ "name": "next" }]
+    "types": ["@testing-library/jest-dom"]
   }
 }

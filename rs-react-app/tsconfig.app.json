@@ -6,6 +6,11 @@
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
+    "plugins": [{ "name": "next" }],
+    "esModuleInterop": true,
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "incremental": true,
 
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -24,12 +29,18 @@
     "noUncheckedSideEffectImports": true,
 
     /* Testing */
-    "types": ["@testing-library/jest-dom", "vitest/globals", "vite/client"]
+    "types": [
+      "@testing-library/jest-dom",
+      "vitest/globals",
+      "vite/client",
+      "node"
+    ]
   },
   "include": ["src", "./dist/types/**/*.ts", "./next-env.d.ts"],
   "exclude": [
     "src/**/*.test.ts",
     "src/**/*.test.tsx",
-    "src/**/__tests__/**, ../node_modules/*"
+    "src/**/__tests__/**",
+    "./node_modules/*"
   ]
 }
