@@ -2,7 +2,7 @@ import { Header } from './components/Header.tsx';
 import { Routes, Route } from 'react-router';
 import PokemonPage from './components/PokemonPage.tsx';
 import About from './components/About.tsx';
-import { NotFound } from './components/NotFound.tsx';
+import { NotFound } from './app/not-found.tsx';
 import { PokemonDetails } from './components/PokemonDetails.tsx';
 import Footer from './components/footer.tsx';
 

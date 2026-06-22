@@ -1,16 +1,19 @@
 import { describe, expect, it, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { MemoryRouter, useSearchParams } from 'react-router';
+import { vi } from 'vitest';
 import PokemonsList from '../components/PokemonsList.tsx';
 import useStore from '../store/Store.tsx';
 
-const SearchParamsDisplay = () => {
-  const [params] = useSearchParams();
-  return <div data-testid="search-params">{params.toString()}</div>;
-};
+const mockPush = vi.hoisted(() => vi.fn());
+const mockSearchParams = vi.hoisted(() => ({
+  current: new URLSearchParams(),
+}));
 
-const renderWithRouter = (ui: React.ReactElement) =>
-  render(<MemoryRouter>{ui}</MemoryRouter>);
+vi.mock('next/navigation', () => ({
+  useSearchParams: () => mockSearchParams.current,
+  useRouter: () => ({ push: mockPush, replace: vi.fn(), back: vi.fn() }),
+  usePathname: () => '/',
+}));
 
 const singlePokemon = [
   { name: 'bulbasaur', url: 'https://pokeapi.co/api/v2/pokemon/1/' },
@@ -23,8 +26,13 @@ const multiplePokemon = [
 ];
 
 describe('DOM tests PokemonList', () => {
+  beforeEach(() => {
+    mockPush.mockClear();
+    mockSearchParams.current = new URLSearchParams();
+  });
+
   it('Empty Array', () => {
-    renderWithRouter(<PokemonsList pokemonsList={[]} />);
+    render(<PokemonsList pokemonsList={[]} />);
 
     expect(screen.getByText('Pokemons count: 0')).toBeInTheDocument();
 
@@ -43,12 +51,12 @@ describe('DOM tests PokemonList', () => {
   });
 
   it('Single Pokemon', () => {
-    renderWithRouter(<PokemonsList pokemonsList={singlePokemon} />);
+    render(<PokemonsList pokemonsList={singlePokemon} />);
     expect(screen.getByText('Pokemons count: 1')).toBeInTheDocument();
   });
 
   it('Heading "Name" exists', () => {
-    renderWithRouter(<PokemonsList pokemonsList={singlePokemon} />);
+    render(<PokemonsList pokemonsList={singlePokemon} />);
 
     expect(
       screen.getByRole('columnheader', { name: 'Name' })
@@ -56,7 +64,7 @@ describe('DOM tests PokemonList', () => {
   });
 
   it('Heading "Description" exists', () => {
-    renderWithRouter(<PokemonsList pokemonsList={singlePokemon} />);
+    render(<PokemonsList pokemonsList={singlePokemon} />);
 
     expect(
       screen.getByRole('columnheader', { name: 'Description' })
@@ -64,24 +72,23 @@ describe('DOM tests PokemonList', () => {
   });
 
   it('Multiple Pokemons', () => {
-    renderWithRouter(<PokemonsList pokemonsList={multiplePokemon} />);
+    render(<PokemonsList pokemonsList={multiplePokemon} />);
     expect(screen.getByText('Pokemons count: 3')).toBeInTheDocument();
   });
 });
 
 describe('Render PokemonList', () => {
+  beforeEach(() => {
+    mockPush.mockClear();
+    mockSearchParams.current = new URLSearchParams();
+  });
+
   it('Prevent to call render', () => {
     const { rerender } = render(
-      <MemoryRouter>
-        <PokemonsList pokemonsList={multiplePokemon} />
-      </MemoryRouter>
+      <PokemonsList pokemonsList={multiplePokemon} />
     );
 
-    rerender(
-      <MemoryRouter>
-        <PokemonsList pokemonsList={multiplePokemon} />
-      </MemoryRouter>
-    );
+    rerender(<PokemonsList pokemonsList={multiplePokemon} />);
 
     expect(screen.getByText('Pokemons count: 3')).toBeInTheDocument();
     expect(screen.getAllByRole('row')).toHaveLength(4);
@@ -89,9 +96,7 @@ describe('Render PokemonList', () => {
 
   it('Length change', () => {
     const { rerender } = render(
-      <MemoryRouter>
-        <PokemonsList pokemonsList={multiplePokemon} />
-      </MemoryRouter>
+      <PokemonsList pokemonsList={multiplePokemon} />
     );
 
     const longerList = [
@@ -99,19 +104,13 @@ describe('Render PokemonList', () => {
       { name: 'charmander', url: 'https://pokeapi.co/api/v2/pokemon/4/' },
     ];
 
-    rerender(
-      <MemoryRouter>
-        <PokemonsList pokemonsList={longerList} />
-      </MemoryRouter>
-    );
+    rerender(<PokemonsList pokemonsList={longerList} />);
     expect(screen.getByText('Pokemons count: 4')).toBeInTheDocument();
   });
 
   it('Name of item in object change for same length', () => {
     const { rerender } = render(
-      <MemoryRouter>
-        <PokemonsList pokemonsList={multiplePokemon} />
-      </MemoryRouter>
+      <PokemonsList pokemonsList={multiplePokemon} />
     );
 
     const changedNameList = [
@@ -119,11 +118,7 @@ describe('Render PokemonList', () => {
       multiplePokemon[1],
     ];
 
-    rerender(
-      <MemoryRouter>
-        <PokemonsList pokemonsList={changedNameList} />
-      </MemoryRouter>
-    );
+    rerender(<PokemonsList pokemonsList={changedNameList} />);
 
     expect(
       screen.getByRole('cell', { name: 'charmander' })
@@ -135,9 +130,7 @@ describe('Render PokemonList', () => {
 
   it('URL of item in object change for same length', () => {
     const { rerender } = render(
-      <MemoryRouter>
-        <PokemonsList pokemonsList={multiplePokemon} />
-      </MemoryRouter>
+      <PokemonsList pokemonsList={multiplePokemon} />
     );
 
     const newUrl = 'https://pokeapi.co/api/v2/pokemon/999/';
@@ -146,11 +139,7 @@ describe('Render PokemonList', () => {
       multiplePokemon[1],
     ];
 
-    rerender(
-      <MemoryRouter>
-        <PokemonsList pokemonsList={changedUrlList} />
-      </MemoryRouter>
-    );
+    rerender(<PokemonsList pokemonsList={changedUrlList} />);
 
     expect(
       screen.getByRole('cell', { name: `URL: ${newUrl}` })
@@ -162,9 +151,7 @@ describe('Render PokemonList', () => {
 
   it('item name differs at same length triggers re-render', () => {
     const { rerender } = render(
-      <MemoryRouter>
-        <PokemonsList pokemonsList={multiplePokemon} />
-      </MemoryRouter>
+      <PokemonsList pokemonsList={multiplePokemon} />
     );
 
     const changedNameSameLength = [
@@ -173,11 +160,7 @@ describe('Render PokemonList', () => {
       multiplePokemon[2],
     ];
 
-    rerender(
-      <MemoryRouter>
-        <PokemonsList pokemonsList={changedNameSameLength} />
-      </MemoryRouter>
-    );
+    rerender(<PokemonsList pokemonsList={changedNameSameLength} />);
 
     expect(
       screen.getByRole('button', { name: 'charmander' })
@@ -189,9 +172,7 @@ describe('Render PokemonList', () => {
 
   it('same data new array does not re-render', () => {
     const { rerender } = render(
-      <MemoryRouter>
-        <PokemonsList pokemonsList={multiplePokemon} />
-      </MemoryRouter>
+      <PokemonsList pokemonsList={multiplePokemon} />
     );
 
     const sameDataNewReference = [
@@ -200,11 +181,7 @@ describe('Render PokemonList', () => {
       { name: 'venusaur', url: 'https://pokeapi.co/api/v2/pokemon/3/' },
     ];
 
-    rerender(
-      <MemoryRouter>
-        <PokemonsList pokemonsList={sameDataNewReference} />
-      </MemoryRouter>
-    );
+    rerender(<PokemonsList pokemonsList={sameDataNewReference} />);
 
     expect(screen.getByText('Pokemons count: 3')).toBeInTheDocument();
     expect(screen.getByRole('cell', { name: 'bulbasaur' })).toBeInTheDocument();
@@ -214,102 +191,72 @@ describe('Render PokemonList', () => {
 });
 
 describe('Pagination', () => {
+  beforeEach(() => {
+    mockPush.mockClear();
+  });
+
   it('Next button increments page in search params', () => {
-    render(
-      <MemoryRouter initialEntries={['/?page=1']}>
-        <PokemonsList pokemonsList={singlePokemon} />
-        <SearchParamsDisplay />
-      </MemoryRouter>
-    );
+    mockSearchParams.current = new URLSearchParams('page=1');
+    render(<PokemonsList pokemonsList={singlePokemon} />);
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
-    expect(screen.getByTestId('search-params').textContent).toBe('page=2');
+    expect(mockPush).toHaveBeenCalledWith('/?page=2');
   });
 
   it('Prev button decrements page when page > 1', () => {
-    render(
-      <MemoryRouter initialEntries={['/?page=3']}>
-        <PokemonsList pokemonsList={singlePokemon} />
-        <SearchParamsDisplay />
-      </MemoryRouter>
-    );
+    mockSearchParams.current = new URLSearchParams('page=3');
+    render(<PokemonsList pokemonsList={singlePokemon} />);
     fireEvent.click(screen.getByRole('button', { name: 'Prev' }));
-    expect(screen.getByTestId('search-params').textContent).toBe('page=2');
+    expect(mockPush).toHaveBeenCalledWith('/?page=2');
   });
 
   it('Prev button does nothing when page is 1', () => {
-    render(
-      <MemoryRouter initialEntries={['/?page=1']}>
-        <PokemonsList pokemonsList={singlePokemon} />
-        <SearchParamsDisplay />
-      </MemoryRouter>
-    );
+    mockSearchParams.current = new URLSearchParams('page=1');
+    render(<PokemonsList pokemonsList={singlePokemon} />);
     fireEvent.click(screen.getByRole('button', { name: 'Prev' }));
-    expect(screen.getByTestId('search-params').textContent).toBe('page=1');
+    expect(mockPush).not.toHaveBeenCalled();
   });
 
   it('displays current page number', () => {
-    render(
-      <MemoryRouter initialEntries={['/?page=5']}>
-        <PokemonsList pokemonsList={singlePokemon} />
-      </MemoryRouter>
-    );
+    mockSearchParams.current = new URLSearchParams('page=5');
+    render(<PokemonsList pokemonsList={singlePokemon} />);
     expect(screen.getByText('5')).toBeInTheDocument();
   });
 });
 
 describe('Pokemon selection', () => {
   beforeEach(() => {
+    mockPush.mockClear();
+    mockSearchParams.current = new URLSearchParams();
     useStore.setState({ selectedPokemons: [] });
   });
 
   it('clicking pokemon name sets pokemonId in search params', () => {
-    render(
-      <MemoryRouter>
-        <PokemonsList pokemonsList={singlePokemon} />
-        <SearchParamsDisplay />
-      </MemoryRouter>
-    );
+    render(<PokemonsList pokemonsList={singlePokemon} />);
     fireEvent.click(screen.getByRole('button', { name: 'bulbasaur' }));
-    expect(screen.getByTestId('search-params').textContent).toBe('pokemonId=1');
+    expect(mockPush).toHaveBeenCalledWith('/?pokemonId=1');
   });
 
   it('checking checkbox adds pokemon to store', () => {
-    render(
-      <MemoryRouter>
-        <PokemonsList pokemonsList={singlePokemon} />
-      </MemoryRouter>
-    );
+    render(<PokemonsList pokemonsList={singlePokemon} />);
     fireEvent.click(screen.getByRole('checkbox'));
     expect(useStore.getState().selectedPokemons).toContain('bulbasaur');
   });
 
   it('unchecking checkbox removes pokemon from store', () => {
     useStore.setState({ selectedPokemons: ['bulbasaur'] });
-    render(
-      <MemoryRouter>
-        <PokemonsList pokemonsList={singlePokemon} />
-      </MemoryRouter>
-    );
+    render(<PokemonsList pokemonsList={singlePokemon} />);
     fireEvent.click(screen.getByRole('checkbox'));
     expect(useStore.getState().selectedPokemons).not.toContain('bulbasaur');
   });
 
   it('checkbox is checked when pokemon is in store', () => {
     useStore.setState({ selectedPokemons: ['bulbasaur'] });
-    render(
-      <MemoryRouter>
-        <PokemonsList pokemonsList={singlePokemon} />
-      </MemoryRouter>
-    );
+    render(<PokemonsList pokemonsList={singlePokemon} />);
     expect(screen.getByRole('checkbox')).toBeChecked();
   });
 
   it('checkbox is unchecked when pokemon is not in store', () => {
-    render(
-      <MemoryRouter>
-        <PokemonsList pokemonsList={singlePokemon} />
-      </MemoryRouter>
-    );
+    render(<PokemonsList pokemonsList={singlePokemon} />);
     expect(screen.getByRole('checkbox')).not.toBeChecked();
   });
 });

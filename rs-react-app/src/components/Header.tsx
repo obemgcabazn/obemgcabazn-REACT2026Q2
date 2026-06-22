@@ -1,11 +1,14 @@
+'use client';
 import './header.scss';
 import TestError from './TestError.tsx';
-import { NavLink } from 'react-router';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { ThemeSwitcher } from './ThemeSwitcher.tsx';
 import { useQueryClient } from '@tanstack/react-query';
 
 export const Header = () => {
   const queryClient = useQueryClient();
+  const pathname = usePathname();
 
   const refreshCache = () => {
     queryClient.clear();
@@ -16,12 +19,18 @@ export const Header = () => {
       <div className="container flex-aic-sb">
         <h3>Pokemon Searching App</h3>
         <nav>
-          <NavLink to="/" className="button__main">
+          <Link
+            href="/"
+            className={`button__main ${pathname === '/' ? 'active' : ''}`}
+          >
             Main Page
-          </NavLink>
-          <NavLink to="/about" className="button__main">
+          </Link>
+          <Link
+            href="/about"
+            className={`button__main ${pathname === '/about' ? 'active' : ''}`}
+          >
             About
-          </NavLink>
+          </Link>
           <TestError />
           <button className="button__main" onClick={refreshCache}>
             Refresh

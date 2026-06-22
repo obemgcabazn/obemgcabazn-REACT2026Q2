@@ -1,29 +1,33 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { MemoryRouter, useSearchParams } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { PokemonDetails } from '../components/PokemonDetails';
 
-const SearchParamsDisplay = () => {
-  const [params] = useSearchParams();
-  return <div data-testid="search-params">{params.toString()}</div>;
-};
+const mockPush = vi.hoisted(() => vi.fn());
+const mockSearchParams = vi.hoisted(() => ({
+  current: new URLSearchParams(),
+}));
+
+vi.mock('next/navigation', () => ({
+  useSearchParams: () => mockSearchParams.current,
+  useRouter: () => ({ push: mockPush, replace: vi.fn(), back: vi.fn() }),
+  usePathname: () => '/',
+}));
 
 const createQueryClient = () =>
   new QueryClient({ defaultOptions: { queries: { retry: false } } });
 
 const renderWithProviders = (
-  initialEntry = '/',
+  params = '',
   queryClient = createQueryClient()
-) =>
-  render(
+) => {
+  mockSearchParams.current = new URLSearchParams(params);
+  return render(
     <QueryClientProvider client={queryClient}>
-      <MemoryRouter initialEntries={[initialEntry]}>
-        <PokemonDetails />
-        <SearchParamsDisplay />
-      </MemoryRouter>
+      <PokemonDetails />
     </QueryClientProvider>
   );
+};
 
 const baseMockPokemon = {
   id: 25,
@@ -44,6 +48,7 @@ const baseMockPokemon = {
 
 beforeEach(() => {
   vi.restoreAllMocks();
+  mockPush.mockClear();
 });
 
 describe('PokemonDetails', () => {
@@ -52,7 +57,7 @@ describe('PokemonDetails', () => {
       ok: true,
       json: async () => baseMockPokemon,
     } as Response);
-    renderWithProviders('/');
+    renderWithProviders();
     expect(
       document.querySelector('.pokemon-details__wrapper')
     ).toBeInTheDocument();
@@ -60,7 +65,7 @@ describe('PokemonDetails', () => {
 
   it('shows spinner while loading', async () => {
     vi.spyOn(global, 'fetch').mockReturnValue(new Promise(() => {}));
-    renderWithProviders('/?pokemonId=25');
+    renderWithProviders('pokemonId=25');
     await waitFor(() => {
       expect(screen.getByAltText('Loading...')).toBeInTheDocument();
     });
@@ -71,7 +76,7 @@ describe('PokemonDetails', () => {
       ok: true,
       json: async () => baseMockPokemon,
     } as Response);
-    renderWithProviders('/?pokemonId=25');
+    renderWithProviders('pokemonId=25');
     await waitFor(() => {
       expect(screen.queryByAltText('Loading...')).not.toBeInTheDocument();
     });
@@ -82,7 +87,7 @@ describe('PokemonDetails', () => {
       ok: true,
       json: async () => baseMockPokemon,
     } as Response);
-    renderWithProviders('/?pokemonId=25');
+    renderWithProviders('pokemonId=25');
     await waitFor(() => {
       expect(screen.getByText(/Pikachu/)).toBeInTheDocument();
     });
@@ -93,7 +98,7 @@ describe('PokemonDetails', () => {
       ok: true,
       json: async () => baseMockPokemon,
     } as Response);
-    renderWithProviders('/?pokemonId=25');
+    renderWithProviders('pokemonId=25');
     await waitFor(() => {
       expect(screen.getByText('#025')).toBeInTheDocument();
     });
@@ -104,7 +109,7 @@ describe('PokemonDetails', () => {
       ok: true,
       json: async () => baseMockPokemon,
     } as Response);
-    renderWithProviders('/?pokemonId=25');
+    renderWithProviders('pokemonId=25');
     await waitFor(() => {
       expect(screen.getByAltText('pikachu')).toHaveAttribute(
         'src',
@@ -125,7 +130,7 @@ describe('PokemonDetails', () => {
       ok: true,
       json: async () => pokemon,
     } as Response);
-    renderWithProviders('/?pokemonId=25');
+    renderWithProviders('pokemonId=25');
     await waitFor(() => {
       expect(screen.getByAltText('pikachu')).toHaveAttribute(
         'src',
@@ -139,7 +144,7 @@ describe('PokemonDetails', () => {
       ok: true,
       json: async () => baseMockPokemon,
     } as Response);
-    renderWithProviders('/?pokemonId=25');
+    renderWithProviders('pokemonId=25');
     await waitFor(() => {
       expect(screen.getByText('electric')).toBeInTheDocument();
     });
@@ -150,7 +155,7 @@ describe('PokemonDetails', () => {
       ok: true,
       json: async () => baseMockPokemon,
     } as Response);
-    renderWithProviders('/?pokemonId=25');
+    renderWithProviders('pokemonId=25');
     await waitFor(() => {
       expect(screen.getByText('4')).toBeInTheDocument();
       expect(screen.getByText('60')).toBeInTheDocument();
@@ -162,7 +167,7 @@ describe('PokemonDetails', () => {
       ok: true,
       json: async () => baseMockPokemon,
     } as Response);
-    renderWithProviders('/?pokemonId=25');
+    renderWithProviders('pokemonId=25');
     await waitFor(() => {
       expect(screen.getByText('112')).toBeInTheDocument();
     });
@@ -173,7 +178,7 @@ describe('PokemonDetails', () => {
       ok: true,
       json: async () => ({ ...baseMockPokemon, base_experience: 0 }),
     } as Response);
-    renderWithProviders('/?pokemonId=25');
+    renderWithProviders('pokemonId=25');
     await waitFor(() => screen.getByText(/Pikachu/));
     expect(screen.queryByText(/Base Exp/)).not.toBeInTheDocument();
   });
@@ -184,7 +189,7 @@ describe('PokemonDetails', () => {
       status: 404,
       json: async () => ({}),
     } as Response);
-    renderWithProviders('/?pokemonId=9999');
+    renderWithProviders('pokemonId=9999');
     await waitFor(() => {
       expect(screen.getByText('Pokemon not found')).toBeInTheDocument();
     });
@@ -195,14 +200,12 @@ describe('PokemonDetails', () => {
       ok: true,
       json: async () => baseMockPokemon,
     } as Response);
-    renderWithProviders('/?pokemonId=25');
+    renderWithProviders('pokemonId=25');
     await waitFor(() => screen.getByText(/Pikachu/));
 
     fireEvent.click(screen.getByText(/Close/));
 
-    await waitFor(() => {
-      expect(screen.getByTestId('search-params').textContent).toBe('');
-    });
+    expect(mockPush).toHaveBeenCalledWith('/?');
   });
 
   it('serves cached data on re-render without calling fetch again', async () => {
@@ -212,7 +215,7 @@ describe('PokemonDetails', () => {
       json: async () => baseMockPokemon,
     } as Response);
 
-    const { rerender } = renderWithProviders('/?pokemonId=25', queryClient);
+    const { rerender } = renderWithProviders('pokemonId=25', queryClient);
 
     await waitFor(() => {
       expect(screen.getByText(/Pikachu/)).toBeInTheDocument();
@@ -220,10 +223,7 @@ describe('PokemonDetails', () => {
 
     rerender(
       <QueryClientProvider client={queryClient}>
-        <MemoryRouter initialEntries={['/?pokemonId=25']}>
-          <PokemonDetails />
-          <SearchParamsDisplay />
-        </MemoryRouter>
+        <PokemonDetails />
       </QueryClientProvider>
     );
 

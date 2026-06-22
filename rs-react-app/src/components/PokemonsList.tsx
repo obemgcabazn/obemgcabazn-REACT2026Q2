@@ -1,6 +1,7 @@
+'use client';
 import './pokemon-list.scss';
 import React from 'react';
-import { useSearchParams } from 'react-router';
+import { useNextSearchParams } from '../hooks/useNextSearchParams.tsx';
 import useStore from '../store/Store.tsx';
 
 interface PokemonInList {
@@ -13,12 +14,12 @@ interface PokemonsListProps {
 }
 
 function PokemonsListComponent(props: PokemonsListProps) {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useNextSearchParams();
   const { selectedPokemons, togglePokemon } = useStore();
 
   const nextPage = () => {
     const newPage = Number(searchParams.get('page')) + 1;
-    const newParams = new URLSearchParams(searchParams);
+    const newParams = new URLSearchParams(searchParams.toString());
     newParams.set('page', String(newPage));
     setSearchParams(newParams);
   };
@@ -26,7 +27,7 @@ function PokemonsListComponent(props: PokemonsListProps) {
     const page = Number(searchParams.get('page'));
     if (page > 1) {
       const newPage = page - 1;
-      const newParams = new URLSearchParams(searchParams);
+      const newParams = new URLSearchParams(searchParams.toString());
       newParams.set('page', String(newPage));
       setSearchParams(newParams);
     }
@@ -34,7 +35,7 @@ function PokemonsListComponent(props: PokemonsListProps) {
 
   const handleSelectPokemon = (url: string) => {
     const pokemonId = new URL(url).pathname.split('/').filter(Boolean).pop();
-    const newParams = new URLSearchParams(searchParams);
+    const newParams = new URLSearchParams(searchParams.toString());
     newParams.set('pokemonId', String(pokemonId));
     setSearchParams(newParams);
   };

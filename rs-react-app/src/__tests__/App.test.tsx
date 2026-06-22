@@ -4,6 +4,28 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import App from '../App';
 
+vi.mock('next/navigation', () => ({
+  useSearchParams: () => new URLSearchParams('page=1'),
+  useRouter: () => ({ push: vi.fn(), replace: vi.fn(), back: vi.fn() }),
+  usePathname: () => '/',
+}));
+
+vi.mock('next/link', () => ({
+  default: ({
+    href,
+    children,
+    className,
+  }: {
+    href: string;
+    children: React.ReactNode;
+    className?: string;
+  }) => (
+    <a href={href} className={className}>
+      {children}
+    </a>
+  ),
+}));
+
 globalThis.fetch = vi.fn();
 
 vi.mock('../components/Spinner', () => ({

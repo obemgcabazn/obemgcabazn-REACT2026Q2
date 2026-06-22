@@ -1,9 +1,28 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { vi, describe, it, expect } from 'vitest';
 import { Header } from '../components/Header';
+
+vi.mock('next/navigation', () => ({
+  usePathname: () => '/',
+}));
+
+vi.mock('next/link', () => ({
+  default: ({
+    href,
+    children,
+    className,
+  }: {
+    href: string;
+    children: React.ReactNode;
+    className?: string;
+  }) => (
+    <a href={href} className={className}>
+      {children}
+    </a>
+  ),
+}));
 
 vi.mock('../components/ThemeSwitcher', () => ({
   ThemeSwitcher: () => <button>Theme</button>,
@@ -19,9 +38,7 @@ const renderHeader = (queryClient?: QueryClient) => {
     queryClient: client,
     ...render(
       <QueryClientProvider client={client}>
-        <MemoryRouter>
-          <Header />
-        </MemoryRouter>
+        <Header />
       </QueryClientProvider>
     ),
   };

@@ -1,24 +1,23 @@
+'use client';
 import useLocalStorage from '../hooks/useLocalStorage.tsx';
 import SearchForm from './SearchForm.tsx';
 import PokemonsList from './PokemonsList.tsx';
 import Spinner from './Spinner.tsx';
 import ErrorHandler from './ErrorHandler.tsx';
-import { Outlet, useSearchParams } from 'react-router';
 import OnePokemon from './OnePokemon.tsx';
+import { PokemonDetails } from './PokemonDetails.tsx';
 import { usePokemonList } from '../hooks/usePokemonList.tsx';
 import { usePokemonByName } from '../hooks/usePokemonByName.tsx';
+import { useNextSearchParams } from '../hooks/useNextSearchParams.tsx';
 
 const PokemonPage = () => {
   const [searchQuery, setSearchQuery] = useLocalStorage<string>(
     'searchQuery',
     ''
   );
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useNextSearchParams();
 
-  const page = searchParams.get('page');
-  if (!page) {
-    setSearchParams({ page: '1' });
-  }
+  const page = searchParams.get('page') || '1';
   const pokemonId = searchParams.get('pokemonId');
 
   const {
@@ -49,14 +48,14 @@ const PokemonPage = () => {
       return (
         <div className="pokemon-list__wrapper">
           <PokemonsList pokemonsList={list} />
-          {pokemonId && <Outlet />}
+          {pokemonId && <PokemonDetails />}
         </div>
       );
     }
   };
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    const newParams = new URLSearchParams(searchParams);
+    const newParams = new URLSearchParams(searchParams.toString());
     newParams.set('page', '1');
     newParams.delete('pokemonId');
     setSearchParams(newParams);

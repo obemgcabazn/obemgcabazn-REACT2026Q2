@@ -1,14 +1,18 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router';
-import { NotFound } from '../components/NotFound';
+import NotFound from '../app/not-found';
 
-const renderNotFound = () =>
-  render(
-    <MemoryRouter>
-      <NotFound />
-    </MemoryRouter>
-  );
+vi.mock('next/link', () => ({
+  default: ({
+    href,
+    children,
+  }: {
+    href: string;
+    children: React.ReactNode;
+  }) => <a href={href}>{children}</a>,
+}));
+
+const renderNotFound = () => render(<NotFound />);
 
 describe('NotFound', () => {
   it('renders 404 heading', () => {

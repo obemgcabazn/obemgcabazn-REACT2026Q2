@@ -1,8 +1,18 @@
 import { render, screen, waitFor, act } from '@testing-library/react';
-import { MemoryRouter } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import PokemonPage from '../components/PokemonPage';
+
+const mockPush = vi.hoisted(() => vi.fn());
+const mockSearchParams = vi.hoisted(() => ({
+  current: new URLSearchParams('page=1'),
+}));
+
+vi.mock('next/navigation', () => ({
+  useSearchParams: () => mockSearchParams.current,
+  useRouter: () => ({ push: mockPush, replace: vi.fn(), back: vi.fn() }),
+  usePathname: () => '/',
+}));
 
 globalThis.fetch = vi.fn();
 
@@ -42,9 +52,7 @@ const renderWithProviders = (ui: React.ReactElement) => {
   });
 
   return render(
-    <QueryClientProvider client={queryClient}>
-      <MemoryRouter initialEntries={['/?page=1']}>{ui}</MemoryRouter>
-    </QueryClientProvider>
+    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
   );
 };
 
@@ -52,6 +60,7 @@ describe('PokemonPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
+    mockSearchParams.current = new URLSearchParams('page=1');
   });
 
   it('shows spinner then renders pokemon list', async () => {
@@ -120,14 +129,14 @@ describe('PokemonPage caching', () => {
     localStorage.clear();
   });
 
-  const renderWithCache = (page: string, queryClient: QueryClient) =>
-    render(
+  const renderWithCache = (page: string, queryClient: QueryClient) => {
+    mockSearchParams.current = new URLSearchParams(`page=${page}`);
+    return render(
       <QueryClientProvider client={queryClient}>
-        <MemoryRouter initialEntries={[`/?page=${page}`]}>
-          <PokemonPage />
-        </MemoryRouter>
+        <PokemonPage />
       </QueryClientProvider>
     );
+  };
 
   it('serves list data from cache on re-render without calling fetch again', async () => {
     const queryClient = new QueryClient({
@@ -142,11 +151,10 @@ describe('PokemonPage caching', () => {
       expect(screen.getByText('bulbasaur')).toBeInTheDocument();
     });
 
+    mockSearchParams.current = new URLSearchParams('page=1');
     rerender(
       <QueryClientProvider client={queryClient}>
-        <MemoryRouter initialEntries={['/?page=1']}>
-          <PokemonPage />
-        </MemoryRouter>
+        <PokemonPage />
       </QueryClientProvider>
     );
 

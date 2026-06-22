@@ -27,7 +27,7 @@
 }
 
 html {
-  font-family: 'Faculty Glyphic', sans-serif;
+  font-family: var(--font-faculty-glyphic), sans-serif;
   font-weight: 400;
   font-style: normal;
 
@@ -71,7 +71,7 @@ a {
 
 input,
 button {
-  font-family: 'Lexend', sans-serif;
+  font-family: var(--font-lexend), sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
@@ -116,7 +116,7 @@ table {
   box-shadow: var(--effect-button-shadow);
 
   font: {
-    family: 'Lexend', sans-serif;
+    family: var(--font-lexend), sans-serif;
     weight: bold;
     size: 13px;
   }

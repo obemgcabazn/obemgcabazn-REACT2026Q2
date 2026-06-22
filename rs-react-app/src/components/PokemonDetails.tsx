@@ -1,12 +1,13 @@
+'use client';
 import './pokemon-details.scss';
-import { useSearchParams } from 'react-router';
 import Spinner from './Spinner.tsx';
 import ErrorHandler from './ErrorHandler.tsx';
 import close from '../assets/close.svg';
 import { usePokemonByName } from '../hooks/usePokemonByName.tsx';
+import { useNextSearchParams } from '../hooks/useNextSearchParams.tsx';
 
 export const PokemonDetails = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useNextSearchParams();
   const pokemonId = searchParams.get('pokemonId');
 
   const { data, isLoading, isError, error } = usePokemonByName(
@@ -31,7 +32,7 @@ export const PokemonDetails = () => {
   };
 
   const closeDetails = () => {
-    const newParams = new URLSearchParams(searchParams);
+    const newParams = new URLSearchParams(searchParams.toString());
     newParams.delete('pokemonId');
     setSearchParams(newParams);
   };
