@@ -1,0 +1,40 @@
+{
+  "header": {
+    "title": "Приложение поиска покемонов",
+    "mainPage": "Главная",
+    "about": "О нас",
+    "refresh": "Обновить"
+  },
+  "search": {
+    "placeholder": "Поисковый запрос",
+    "button": "Поиск"
+  },
+  "pokemonList": {
+    "count": "Количество покемонов: {count}",
+    "prev": "Назад",
+    "next": "Вперёд"
+  },
+  "details": {
+    "close": "Закрыть",
+    "height": "Рост",
+    "weight": "Вес",
+    "baseExp": "Базовый опыт",
+    "noImage": "Нет изображения",
+    "pokemon": "Покемон {name}"
+  },
+  "footer": {
+    "totalSelected": "Всего выбрано покемонов: {count}",
+    "unselectAll": "Снять выбор",
+    "download": "Скачать"
+  },
+  "about": {
+    "author": "Автор",
+    "course": "Курс RS School React"
+  },
+  "notFound": {
+    "title": "404 Страница не найдена",
+    "link": "На главную"
+  },
+  "loading": "Загрузка...",
+  "testError": "Вызвать ошибку"
+}

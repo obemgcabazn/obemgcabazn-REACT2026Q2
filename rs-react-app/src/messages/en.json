@@ -1,0 +1,40 @@
+{
+  "header": {
+    "title": "Pokemon Searching App",
+    "mainPage": "Main Page",
+    "about": "About",
+    "refresh": "Refresh"
+  },
+  "search": {
+    "placeholder": "Search request",
+    "button": "Search"
+  },
+  "pokemonList": {
+    "count": "Pokemons count: {count}",
+    "prev": "Prev",
+    "next": "Next"
+  },
+  "details": {
+    "close": "Close",
+    "height": "Height",
+    "weight": "Weight",
+    "baseExp": "Base Exp",
+    "noImage": "No image",
+    "pokemon": "Pokemon {name}"
+  },
+  "footer": {
+    "totalSelected": "Total selected pokemons: {count}",
+    "unselectAll": "Unselect all",
+    "download": "Download"
+  },
+  "about": {
+    "author": "Author",
+    "course": "RS School React Course"
+  },
+  "notFound": {
+    "title": "404 Not Found",
+    "link": "To Main Page"
+  },
+  "loading": "Loading...",
+  "testError": "Test Error"
+}
