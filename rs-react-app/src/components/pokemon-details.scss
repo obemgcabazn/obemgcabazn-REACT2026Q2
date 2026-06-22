@@ -34,9 +34,10 @@
   .pokemon-card__image-container {
     margin-bottom: 30px;
   }
-  .pokemon-details__close-button {
-    position: absolute;
-    z-index: 30;
-    left: -100px;
-  }
+}
+.pokemon-details__close-button {
+  position: absolute;
+  z-index: 30;
+  right: 350px;
+  top: 30px;
 }

@@ -159,3 +159,9 @@ table {
 .mb-5 {
   margin-bottom: 5rem;
 }
+
+.language-switcher {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
