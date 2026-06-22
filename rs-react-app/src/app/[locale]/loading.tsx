@@ -1,8 +1,8 @@
-import './Spinner.scss';
 import Image from 'next/image';
-import pokeball from '../assets/pokeball.svg';
+import pokeball from '../../assets/pokeball.svg';
+import '../../components/Spinner.scss';
 
-const Spinner = () => {
+export default function Loading() {
   return (
     <div className="spinner_wrapper">
       <Image
@@ -15,6 +15,4 @@ const Spinner = () => {
       <p>Loading...</p>
     </div>
   );
-};
-
-export default Spinner;
+}

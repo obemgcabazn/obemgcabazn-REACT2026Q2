@@ -1,48 +1,33 @@
+'use client';
 import './footer.scss';
-import useStore from '../store/Store.tsx';
-import { useState } from 'react';
-import type { Pokemon } from 'pokeapi-typescript';
-import ErrorHandler from './ErrorHandler.tsx';
+import useStore from '../store/Store';
+import { useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 const Footer = () => {
   const { selectedPokemons, clearPokemons } = useStore();
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+  const linkRef = useRef<HTMLAnchorElement>(null);
+  const t = useTranslations('footer');
 
   const downloadPokemonsCSV = async () => {
     try {
       setIsLoading(true);
-      const resp = await Promise.all(
-        selectedPokemons.map((name) =>
-          fetch(`https://pokeapi.co/api/v2/pokemon/${name}/`)
-        )
-      );
-      const data: Pokemon[] = await Promise.all(resp.map((r) => r.json()));
-      const header = 'name,id,types,details URL,height,weight,base_experience';
-      const rows = data.map((pokemon) => {
-        const types = pokemon.types.map((t) => t.type.name).join(' | ');
-        return [
-          pokemon.name,
-          pokemon.id,
-          `"${types}"`,
-          pokemon.species.url,
-          pokemon.height,
-          pokemon.weight,
-          pokemon.base_experience,
-        ].join(',');
+      const resp = await fetch('/api/csv', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pokemons: selectedPokemons }),
       });
-      const csv = [header, ...rows].join('\n');
-      const blob = new Blob([csv], { type: 'text/csv' });
+      const blob = await resp.blob();
       const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `${selectedPokemons.length}_items.csv`;
-      link.click();
+      if (linkRef.current) {
+        linkRef.current.href = url;
+        linkRef.current.download = `${selectedPokemons.length}_items.csv`;
+        linkRef.current.click();
+      }
       URL.revokeObjectURL(url);
-    } catch (err) {
-      setError(
-        err instanceof Error ? err : new Error('Error while loading data')
-      );
+    } catch {
+      /* download error */
     } finally {
       setIsLoading(false);
     }
@@ -51,21 +36,20 @@ const Footer = () => {
   return (
     selectedPokemons.length > 0 && (
       <footer className="footer">
+        <a ref={linkRef} style={{ display: 'none' }} />
         <div className="container">
-          <div>
-            Total selected pokemons: <span>{selectedPokemons.length}</span>
-          </div>
+          <div>{t('totalSelected', { count: selectedPokemons.length })}</div>
           <button className="button__main" onClick={clearPokemons}>
-            Unselect all
+            {t('unselectAll')}
           </button>
           <button
             className="button__main"
             onClick={downloadPokemonsCSV}
             disabled={isLoading}
           >
-            {isLoading && <span className="btn-spinner" />}Download
+            {isLoading && <span className="btn-spinner" />}
+            {t('download')}
           </button>
-          {error && <ErrorHandler errorData={error} />}
         </div>
       </footer>
     )

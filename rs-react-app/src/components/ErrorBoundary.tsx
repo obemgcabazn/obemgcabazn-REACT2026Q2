@@ -1,6 +1,6 @@
 'use client';
 import { Component, type ReactNode } from 'react';
-import ErrorHandler from './ErrorHandler.tsx';
+import ErrorHandler from './ErrorHandler';
 
 interface ErrorBoundaryState {
   error: Error | null;
@@ -26,7 +26,7 @@ export default class ErrorBoundary extends Component<
 
   render() {
     if (this.state.error) {
-      return <ErrorHandler errorData={this.state.error} />;
+      return <ErrorHandler errorMessage={this.state.error.message} />;
     }
     return this.props.children;
   }

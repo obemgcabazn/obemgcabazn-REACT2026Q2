@@ -1,27 +1,25 @@
 import './one-pokemon.scss';
-import type { Pokemon } from 'pokeapi-typescript';
+import Image from 'next/image';
+import type { PokemonDetail } from '../lib/pokemon';
 
 interface OnePokemonProps {
-  pokemon: Pokemon;
+  pokemon: PokemonDetail;
 }
 
 const OnePokemon = ({ pokemon }: OnePokemonProps) => {
-  const getImageUrl = (): string => {
-    const official = pokemon.sprites.other?.['official-artwork']?.front_default;
-    if (official) return official;
-
-    return pokemon.sprites.front_default || '';
-  };
+  const official = pokemon.sprites.other?.['official-artwork']?.front_default;
+  const imageUrl = official || pokemon.sprites.front_default || '';
 
   return (
     <div className="pokemon-card">
       <div className="pokemon-card__image-container">
-        {getImageUrl() ? (
-          <img
-            src={getImageUrl()}
+        {imageUrl ? (
+          <Image
+            src={imageUrl}
             alt={pokemon.name}
             className="pokemon-card__image"
-            loading="lazy"
+            width={200}
+            height={200}
           />
         ) : (
           <div className="pokemon-card__no-image">No image</div>

@@ -1,39 +1,31 @@
+'use client';
 import './search-form.scss';
-import React, { useState } from 'react';
+import { useActionState } from 'react';
+import { searchAction } from '../actions/search';
+import { useTranslations } from 'next-intl';
 
 interface SearchProps {
   searchQuery: string;
-  onSearch: (query: string) => void;
+  locale: string;
 }
 
-const SearchForm = ({ searchQuery, onSearch }: SearchProps) => {
-  const [search, setSearch] = useState(searchQuery);
-
-  const handleInputChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ): void => {
-    const newSearchQuery = event.target.value.trim();
-    setSearch(newSearchQuery);
-  };
-
-  const searchStart = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    onSearch(search);
-  };
+const SearchForm = ({ searchQuery, locale }: SearchProps) => {
+  const t = useTranslations('search');
+  const [, formAction, isPending] = useActionState(searchAction, searchQuery);
 
   return (
-    <form className="search__form" onSubmit={searchStart}>
+    <form className="search__form" action={formAction}>
+      <input type="hidden" name="locale" value={locale} />
       <input
         type="text"
         id="search-input"
-        name="search-input"
-        placeholder="Search request"
-        value={search}
-        onChange={handleInputChange}
+        name="query"
+        placeholder={t('placeholder')}
+        defaultValue={searchQuery}
         className="search__input"
       />
-      <button className="search__button" type="submit">
-        Search
+      <button className="search__button" type="submit" disabled={isPending}>
+        {t('button')}
       </button>
     </form>
   );

@@ -1,9 +1,8 @@
-import Link from 'next/link';
-export default function NotFound() {
+export default function RootNotFound() {
   return (
     <div className="text-center">
       <h1>404 Not Found</h1>
-      <Link href="/">To Main Page</Link>
+      <a href="/">To Main Page</a>
     </div>
   );
 }

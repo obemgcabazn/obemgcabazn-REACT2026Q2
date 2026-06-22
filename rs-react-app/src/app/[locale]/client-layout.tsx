@@ -1,7 +1,7 @@
 'use client';
 import type { ReactNode } from 'react';
-import { Header } from '../components/Header';
-import Footer from '../components/footer';
+import { Header } from '../../components/Header';
+import Footer from '../../components/footer';
 
 export default function ClientLayout({ children }: { children: ReactNode }) {
   return (

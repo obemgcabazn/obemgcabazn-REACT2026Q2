@@ -1,59 +1,54 @@
 'use client';
 import './pokemon-list.scss';
 import React from 'react';
-import { useNextSearchParams } from '../hooks/useNextSearchParams.tsx';
-import useStore from '../store/Store.tsx';
-
-interface PokemonInList {
-  name: string;
-  url: string;
-}
+import useStore from '../store/Store';
+import { Link } from '../i18n/navigation';
+import { useTranslations } from 'next-intl';
+import type { PokemonInList } from '../lib/pokemon';
 
 interface PokemonsListProps {
   pokemonsList: PokemonInList[];
+  currentPage: string;
+  locale: string;
 }
 
-function PokemonsListComponent(props: PokemonsListProps) {
-  const [searchParams, setSearchParams] = useNextSearchParams();
+function PokemonsListComponent({
+  pokemonsList,
+  currentPage,
+  locale,
+}: PokemonsListProps) {
   const { selectedPokemons, togglePokemon } = useStore();
-
-  const nextPage = () => {
-    const newPage = Number(searchParams.get('page')) + 1;
-    const newParams = new URLSearchParams(searchParams.toString());
-    newParams.set('page', String(newPage));
-    setSearchParams(newParams);
-  };
-  const prevPage = () => {
-    const page = Number(searchParams.get('page'));
-    if (page > 1) {
-      const newPage = page - 1;
-      const newParams = new URLSearchParams(searchParams.toString());
-      newParams.set('page', String(newPage));
-      setSearchParams(newParams);
-    }
-  };
-
-  const handleSelectPokemon = (url: string) => {
-    const pokemonId = new URL(url).pathname.split('/').filter(Boolean).pop();
-    const newParams = new URLSearchParams(searchParams.toString());
-    newParams.set('pokemonId', String(pokemonId));
-    setSearchParams(newParams);
-  };
+  const t = useTranslations('pokemonList');
+  const page = Number(currentPage);
 
   return (
     <div className="pokemon-list">
       <div className="flex-aic-sb">
         <p className="pokemon-list__count">
-          Pokemons count: {props.pokemonsList.length}
+          {t('count', { count: pokemonsList.length })}
         </p>
         <div className="pagination">
-          <button className="button__main" onClick={prevPage}>
-            Prev
-          </button>
-          <span className="button__main">{searchParams.get('page')}</span>
-          <button className="button__main" onClick={nextPage}>
-            Next
-          </button>
+          {page > 1 ? (
+            <Link
+              href={`/?page=${page - 1}`}
+              locale={locale}
+              className="button__main"
+            >
+              {t('prev')}
+            </Link>
+          ) : (
+            <span className="button__main" aria-disabled="true">
+              {t('prev')}
+            </span>
+          )}
+          <span className="button__main">{page}</span>
+          <Link
+            href={`/?page=${page + 1}`}
+            locale={locale}
+            className="button__main"
+          >
+            {t('next')}
+          </Link>
         </div>
       </div>
       <table>
@@ -64,25 +59,32 @@ function PokemonsListComponent(props: PokemonsListProps) {
           </tr>
         </thead>
         <tbody>
-          {props.pokemonsList.map((pokemon: PokemonInList, index: number) => (
-            <tr key={index}>
-              <td>
-                <input
-                  type="checkbox"
-                  className="pokemon-list-checkbox"
-                  onChange={() => togglePokemon(pokemon.name)}
-                  checked={selectedPokemons.includes(pokemon.name)}
-                />
-                <button
-                  className="button__link"
-                  onClick={() => handleSelectPokemon(pokemon.url)}
-                >
-                  {pokemon.name}
-                </button>
-              </td>
-              <td>URL: {pokemon.url}</td>
-            </tr>
-          ))}
+          {pokemonsList.map((pokemon, index) => {
+            const pokemonId = new URL(pokemon.url).pathname
+              .split('/')
+              .filter(Boolean)
+              .pop();
+            return (
+              <tr key={index}>
+                <td>
+                  <input
+                    type="checkbox"
+                    className="pokemon-list-checkbox"
+                    onChange={() => togglePokemon(pokemon.name)}
+                    checked={selectedPokemons.includes(pokemon.name)}
+                  />
+                  <Link
+                    href={`/?page=${currentPage}&pokemonId=${pokemonId}`}
+                    locale={locale}
+                    className="button__link"
+                  >
+                    {pokemon.name}
+                  </Link>
+                </td>
+                <td>URL: {pokemon.url}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
@@ -94,13 +96,14 @@ const PokemonsList = React.memo(
   (prevProps, nextProps) => {
     const prev = prevProps.pokemonsList;
     const next = nextProps.pokemonsList;
-    if (prev === next) return true;
+    if (prev === next && prevProps.currentPage === nextProps.currentPage)
+      return true;
     if (prev.length !== next.length) return false;
     for (let i = 0; i < next.length; i++) {
       if (next[i].name !== prev[i].name || next[i].url !== prev[i].url)
         return false;
     }
-    return true;
+    return prevProps.currentPage === nextProps.currentPage;
   }
 );
 

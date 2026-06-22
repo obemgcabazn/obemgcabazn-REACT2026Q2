@@ -1,9 +1,5 @@
 import '../styles/global.scss';
 import type { ReactNode } from 'react';
-import ErrorBoundary from '../components/ErrorBoundary';
-import { ThemeProvider } from '../context/ThemeContext';
-import Providers from './providers';
-import ClientLayout from './client-layout';
 import { Faculty_Glyphic, Lexend } from 'next/font/google';
 
 export const metadata = {
@@ -24,16 +20,8 @@ const lexend = Lexend({
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={`${facultyGlyphic.variable} ${lexend.variable}`}>
-      <body>
-        <Providers>
-          <ErrorBoundary>
-            <ThemeProvider>
-              <ClientLayout>{children}</ClientLayout>
-            </ThemeProvider>
-          </ErrorBoundary>
-        </Providers>
-      </body>
+    <html className={`${facultyGlyphic.variable} ${lexend.variable}`}>
+      <body>{children}</body>
     </html>
   );
 }

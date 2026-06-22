@@ -3,13 +3,10 @@ import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { vi, describe, it, expect } from 'vitest';
 import { Header } from '../components/Header';
+import { IntlWrapper } from './test-utils';
 
-vi.mock('next/navigation', () => ({
-  usePathname: () => '/',
-}));
-
-vi.mock('next/link', () => ({
-  default: ({
+vi.mock('../i18n/navigation', () => ({
+  Link: ({
     href,
     children,
     className,
@@ -22,6 +19,8 @@ vi.mock('next/link', () => ({
       {children}
     </a>
   ),
+  usePathname: () => '/',
+  useRouter: () => ({ push: vi.fn(), replace: vi.fn(), back: vi.fn() }),
 }));
 
 vi.mock('../components/ThemeSwitcher', () => ({
@@ -32,14 +31,20 @@ vi.mock('../components/TestError', () => ({
   default: () => <button>Test Error</button>,
 }));
 
+vi.mock('../components/LanguageSwitcher', () => ({
+  default: () => <div>LangSwitcher</div>,
+}));
+
 const renderHeader = (queryClient?: QueryClient) => {
   const client = queryClient ?? new QueryClient();
   return {
     queryClient: client,
     ...render(
-      <QueryClientProvider client={client}>
-        <Header />
-      </QueryClientProvider>
+      <IntlWrapper>
+        <QueryClientProvider client={client}>
+          <Header />
+        </QueryClientProvider>
+      </IntlWrapper>
     ),
   };
 };

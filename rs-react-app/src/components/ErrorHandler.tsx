@@ -1,12 +1,13 @@
+'use client';
 import './error-handler.scss';
 
 interface ErrorProps {
-  errorData: Error;
+  errorMessage: string;
 }
 
-const ErrorHandler = (props: ErrorProps) => {
+const ErrorHandler = ({ errorMessage }: ErrorProps) => {
   const getMessage = () => {
-    switch (props.errorData.message) {
+    switch (errorMessage) {
       case '404':
         return 'Pokemon not found';
       case '400':
@@ -14,7 +15,7 @@ const ErrorHandler = (props: ErrorProps) => {
       case '500':
         return 'Server error, try again later';
       default:
-        return props.errorData.message;
+        return errorMessage;
     }
   };
 

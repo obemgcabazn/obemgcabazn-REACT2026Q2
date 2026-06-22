@@ -1,23 +1,20 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import ErrorHandler from '../components/ErrorHandler.tsx';
+import ErrorHandler from '../components/ErrorHandler';
 
 describe('ErrorHandler', () => {
   it('Test for 404 error message', () => {
-    render(<ErrorHandler errorData={new Error('404')} />);
-
+    render(<ErrorHandler errorMessage="404" />);
     expect(screen.getByText('Pokemon not found')).toBeInTheDocument();
   });
 
   it('Test for 400 error message', () => {
-    render(<ErrorHandler errorData={new Error('400')} />);
-
+    render(<ErrorHandler errorMessage="400" />);
     expect(screen.getByText('Bad request')).toBeInTheDocument();
   });
 
   it('Test for 500 error message', () => {
-    render(<ErrorHandler errorData={new Error('500')} />);
-
+    render(<ErrorHandler errorMessage="500" />);
     expect(
       screen.getByText('Server error, try again later')
     ).toBeInTheDocument();
@@ -25,8 +22,7 @@ describe('ErrorHandler', () => {
 
   it('Test for default error message', () => {
     const testMessage = 'test message';
-    render(<ErrorHandler errorData={new Error(testMessage)} />);
-
+    render(<ErrorHandler errorMessage={testMessage} />);
     expect(screen.getByText(testMessage)).toBeInTheDocument();
   });
 });
